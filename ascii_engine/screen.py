@@ -12,5 +12,5 @@ class Screen:
     def get_height(self):
         return self.height
 
-    async def render(self):
-        yield [[BLANK_COLOR] * self.get_width()] * self.get_height()
+    def render(self):
+        return [[BLANK_COLOR] * self.get_width()] * self.get_height()

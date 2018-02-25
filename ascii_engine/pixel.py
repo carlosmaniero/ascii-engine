@@ -1,5 +1,4 @@
 from ascii_engine.colors import RED
-BLANK_PIXEL = ''
 
 class Pixel:
     def __init__(self, char, foreground_color=None, background_color=None):
@@ -27,3 +26,6 @@ class Pixel:
 
     def __repr__(self):
         return 'Pixel({})'.format(repr(self.__char))
+
+
+BLANK_PIXEL = Pixel(' ')

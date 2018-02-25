@@ -6,6 +6,6 @@ python:
 install:
   - pip install -r requirements-dev.txt
 script:
-  - pytest
+  - py.test --cov-report= --cov=ascii_engine
 after_success:
     - coveralls

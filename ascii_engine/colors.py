@@ -1,1 +1,2 @@
-BLANK_COLOR = ''
+TRANSPARENT = ''
+RED = '31'

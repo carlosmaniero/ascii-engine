@@ -1,4 +1,4 @@
-from ascii_engine.colors import BLANK_COLOR
+from ascii_engine.pixel import BLANK_PIXEL
 
 
 class Screen:
@@ -13,4 +13,4 @@ class Screen:
         return self.height
 
     def render(self):
-        return [[BLANK_COLOR] * self.get_width()] * self.get_height()
+        return [[BLANK_PIXEL] * self.get_width()] * self.get_height()

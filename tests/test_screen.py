@@ -1,5 +1,5 @@
 from ascii_engine.screen import Screen
-from ascii_engine.colors import BLANK_COLOR
+from ascii_engine.pixel import BLANK_PIXEL
 
 
 def test_that_screen_returns_the_given_size():
@@ -15,6 +15,6 @@ def test_that_screen_render_returns_an_empty_matrix_of_colors():
     screen = Screen(3, 2)
     rendered = screen.render()
     assert [
-               [BLANK_COLOR, BLANK_COLOR, BLANK_COLOR],
-               [BLANK_COLOR, BLANK_COLOR, BLANK_COLOR]
+               [BLANK_PIXEL, BLANK_PIXEL, BLANK_PIXEL],
+               [BLANK_PIXEL, BLANK_PIXEL, BLANK_PIXEL]
            ] == rendered

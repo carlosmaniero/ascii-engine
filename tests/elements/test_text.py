@@ -3,6 +3,9 @@ from ascii_engine import colors
 from ascii_engine.pixel import Pixel
 
 
+RED = colors.RGB(255, 0, 0)
+
+
 def test_text_has_the_width_equals_the_text_size():
     text = 'My great text'
     text_element = Text(text)
@@ -33,17 +36,17 @@ def test_text_has_pixel_representations():
 def test_text_uses_the_given_foreground_color():
     text = 'Hi\nBye'
     text_element = Text(text)
-    text_element.set_foreground_color(colors.RED)
+    text_element.set_foreground_color(RED)
 
     for pixels in text_element.get_pixels():
-        assert all([colors.RED == pixel.get_foreground_color()
+        assert all([RED == pixel.get_foreground_color()
                     for pixel in pixels])
 
 def test_text_uses_the_given_background_color():
     text = 'Hi\nBye'
     text_element = Text(text)
-    text_element.set_background_color(colors.RED)
+    text_element.set_background_color(RED)
 
     for pixels in text_element.get_pixels():
-        assert all([colors.RED == pixel.get_background_color()
+        assert all([RED == pixel.get_background_color()
                     for pixel in pixels])

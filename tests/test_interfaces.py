@@ -6,9 +6,9 @@ from ascii_engine.elements.text import Text
 
 def test_that_render_configures_the_curses_application():
     curses_interface.render(Screen(10, 20))
-    mocked_curses.initscr.assert_called()
-    mocked_curses.noecho.assert_called()
-    mocked_curses.cbreak.assert_called()
+    assert mocked_curses.initscr.called
+    assert mocked_curses.noecho.called
+    assert mocked_curses.cbreak.called
     curses_interface.window.keypad.assert_called_with(True)
 
 
@@ -28,7 +28,6 @@ def test_that_the_terminal_is_well_reconfigured_after_stop_call():
     curses_interface.stop()
 
     curses_interface.window.keypad.assert_called_with(False)
-    mocked_curses.nocbreak.assert_called()
-    mocked_curses.echo.assert_called()
-    mocked_curses.endwin.assert_called()
-
+    assert mocked_curses.nocbreak.called
+    assert mocked_curses.echo.called
+    assert mocked_curses.endwin.called

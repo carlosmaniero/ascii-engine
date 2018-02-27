@@ -20,4 +20,3 @@ class Coords:
 
 
 CoordinatedElement = namedtuple('CoordinatedElement', ['coords', 'element'])
-

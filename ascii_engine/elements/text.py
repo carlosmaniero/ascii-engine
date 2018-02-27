@@ -26,7 +26,8 @@ class Text:
 
     def get_pixels(self):
         default_pixel = self._create_pixel(' ')
-        pixels = [[default_pixel] * self.get_width() for _ in range(self.get_height())]
+        pixels = [[default_pixel] * self.get_width()
+                  for _ in range(self.get_height())]
 
         for line_index, line in enumerate(self.lines):
             for char_index, char in enumerate(line):

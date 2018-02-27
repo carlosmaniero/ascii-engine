@@ -49,4 +49,4 @@ class ScreenFragment:
         return [BLANK_PIXEL] * self.width
 
     def _create_blank_screen(self):
-         return [self._create_empty_line() for _ in range(self.height)]
+        return [self._create_empty_line() for _ in range(self.height)]

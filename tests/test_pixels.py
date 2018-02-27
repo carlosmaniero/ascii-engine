@@ -13,8 +13,8 @@ def test_pixels_are_equals_when_they_have_the_same_foreground():
 
 
 def test_pixels_are_equals_when_they_have_the_same_background():
-    assert Pixel('a', foreground_color=RED) == Pixel('a', foreground_color=RED)
-    assert Pixel('a', foreground_color=RED) != Pixel('a')
+    assert Pixel('a', background_color=RED) == Pixel('a', background_color=RED)
+    assert Pixel('a', background_color=RED) != Pixel('a')
 
 def test_pixel_is_different_of_anything_that_is_not_a_pixel():
     assert Pixel('a') != 'a'

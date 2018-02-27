@@ -1,5 +1,3 @@
-from ascii_engine.colors import RED
-
 class Pixel:
     def __init__(self, char, foreground_color=None, background_color=None):
         self.__char = char
@@ -19,10 +17,10 @@ class Pixel:
         if not isinstance(other, Pixel):
             return False
 
-        is_same_char = self.get_char() == other.get_char()
-        is_same_foreground = self.get_foreground_color() == other.get_foreground_color()
-        is_same_background = self.get_background_color() == other.get_background_color()
-        return is_same_char and is_same_foreground
+        same_char = self.get_char() == other.get_char()
+        same_fg = self.get_foreground_color() == other.get_foreground_color()
+        same_bg = self.get_background_color() == other.get_background_color()
+        return same_char and same_fg and same_bg
 
     def __repr__(self):
         return 'Pixel({})'.format(repr(self.__char))

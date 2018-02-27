@@ -3,3 +3,5 @@ pytest-asyncio
 pytest-cov
 coveralls
 jedi
+pycodestyle
+pyflakes

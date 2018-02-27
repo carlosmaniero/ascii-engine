@@ -71,3 +71,13 @@ def test_that_given_a_foreground_and_background_a_curses_pair_is_created():
     curses_interface.window.addstr.assert_any_call(0, 1, 'b', 'color_1')
     curses_interface.window.addstr.assert_any_call(1, 0, 'c', 'color_1')
     curses_interface.window.addstr.assert_any_call(1, 1, 'd', 'color_1')
+
+
+@patch_curses
+def test_that_curses_interface_read_the_input_from_curses():
+    curses_interface = CursesInterface()
+    curses_interface.window.getch = Mock(return_value=ord('a'))
+
+    keycode = curses_interface.listen_keyboard()
+    assert keycode == ord('a')
+    assert curses_interface.window.getch.called is True

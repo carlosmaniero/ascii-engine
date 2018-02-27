@@ -46,6 +46,9 @@ class CursesInterface:
             self.pairs.append((term_fg, term_bg))
         return curses.color_pair(pair_index)
 
+    def listen_keyboard(self):
+        return self.window.getch()
+
     def stop(self):
         self.window.keypad(False)
         curses.nocbreak()

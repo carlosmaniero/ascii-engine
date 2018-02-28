@@ -54,6 +54,3 @@ class CursesInterface:
         curses.nocbreak()
         curses.echo()
         curses.endwin()
-
-
-curses_interface = CursesInterface()

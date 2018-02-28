@@ -1,5 +1,5 @@
 import signal
-from ascii_engine.interfaces import curses_interface
+from ascii_engine.interfaces import CursesInterface
 from ascii_engine.screen import Screen
 from ascii_engine.elements.text import Text
 from ascii_engine.colors import RGB
@@ -12,6 +12,7 @@ if __name__ == '__main__':
 
     screen = Screen(20, 1)
     screen.add_element(text_element)
+    curses_interface = CursesInterface()
     curses_interface.render(screen)
 
     try:

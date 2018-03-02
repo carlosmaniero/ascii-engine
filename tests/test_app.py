@@ -5,7 +5,7 @@ from threading import Thread
 from unittest.mock import Mock
 from ascii_engine.app import App
 from ascii_engine.screen import Screen
-from tests.mocked_modules.async import AsyncMock
+from tests.mocked_modules.asyncmock import AsyncMock
 
 
 

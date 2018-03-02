@@ -23,6 +23,7 @@ async def test_that_given_a_view_function_it_is_called_with_the_given_initial_mo
     initial_model = 42
     app = create_app(initial_model, event_loop)
     event_loop.run_in_executor(None, app.start)
+    await asyncio.sleep(0.1)
     app.view.assert_called_once_with(initial_model)
 
 
@@ -36,13 +37,13 @@ def test_that_when_the_app_render_is_called_it_call_the_view_and_send_the_result
     app.stop()
 
 
-
 @pytest.mark.asyncio
 async def test_that_the_when_app_starts_it_renders_the_view(event_loop):
     initial_model = 42
     app = create_app(initial_model, event_loop)
     app.render_view = Mock()
     event_loop.run_in_executor(None, app.start)
+    await asyncio.sleep(0.1)
     assert app.render_view.called
     app.stop()
 

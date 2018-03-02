@@ -5,3 +5,5 @@ coveralls
 jedi
 pycodestyle
 pyflakes
+
+ipdb

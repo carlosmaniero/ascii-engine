@@ -11,7 +11,8 @@ class App:
 
     def start(self):
         self.render_view()
-        self.loop.run_forever()
+        if not self.loop.is_running():
+            self.loop.run_forever()
 
     def render_view(self):
         screen = self.view(self.model)

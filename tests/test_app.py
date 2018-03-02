@@ -22,8 +22,7 @@ def create_app(model, event_loop):
 async def test_that_given_a_view_function_it_is_called_with_the_given_initial_model(event_loop):
     initial_model = 42
     app = create_app(initial_model, event_loop)
-    event_loop.run_in_executor(None, app.start)
-    await asyncio.sleep(1)
+    await event_loop.run_in_executor(None, app.start)
     app.view.assert_called_once_with(initial_model)
 
 
@@ -42,8 +41,7 @@ async def test_that_the_when_app_starts_it_renders_the_view(event_loop):
     initial_model = 42
     app = create_app(initial_model, event_loop)
     app.render_view = Mock()
-    event_loop.run_in_executor(None, app.start)
-    await asyncio.sleep(1)
+    await event_loop.run_in_executor(None, app.start)
     assert app.render_view.called
     app.stop()
 
@@ -53,7 +51,7 @@ async def test_that_when_an_registered_action_returns_a_value_the_action_is_call
     initial_model = 41
     app = create_app(initial_model, event_loop)
 
-    event_loop.run_in_executor(None, app.start)
+    await event_loop.run_in_executor(None, app.start)
     app.render_view = Mock()
     subscription = Mock()
     subscription.get_action = AsyncMock(return_value=51)
@@ -85,7 +83,7 @@ async def test_that_when_an_registered_action_is_called_until_has_no_next_action
     initial_model = 41
     app = create_app(initial_model, event_loop)
 
-    event_loop.run_in_executor(None, app.start)
+    await event_loop.run_in_executor(None, app.start)
     app.render_view = Mock()
     subscription = Subscription()
     app.register_subscription(subscription)

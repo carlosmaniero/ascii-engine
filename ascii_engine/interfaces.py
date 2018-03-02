@@ -65,4 +65,7 @@ class CursesKeyboardSubscription:
         self.loop = loop
 
     async def get_action(self):
-        return await self.loop.run_in_executor(None, self.interface.listen_keyboard)
+        return await self.loop.run_in_executor(
+            None,
+            self.interface.listen_keyboard
+        )

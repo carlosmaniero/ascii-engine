@@ -1,6 +1,7 @@
 from unittest.mock import Mock
+import pytest
 from tests.mocked_modules.curses import mocked_curses, patch_curses
-from ascii_engine.interfaces import CursesInterface
+from ascii_engine.interfaces import CursesInterface, CursesKeyboardSubscription
 from ascii_engine.screen import Screen
 from ascii_engine.elements.text import Text
 from ascii_engine.colors import RGB
@@ -81,3 +82,21 @@ def test_that_curses_interface_read_the_input_from_curses():
     keycode = curses_interface.listen_keyboard()
     assert keycode == ord('a')
     assert curses_interface.window.getch.called is True
+
+
+@pytest.mark.asyncio
+async def _test_that_the_keyboard_subscription_get_the_keyboard_from_the_given_interface(event_loop):
+    interface = Mock()
+    interface.listen_keyboard = Mock(return_value=42)
+    subscription = CursesKeyboardSubscription(interface, event_loop)
+    result = await subscription.get_action()
+    assert interface.listen_keyboard.called
+    assert result == 42
+
+
+@patch_curses
+def test_that_get_subscriptions_return_the_keyboard_well_configured(event_loop):
+    curses_interface = CursesInterface()
+    keyboard = curses_interface.get_subscriptions(event_loop)[0]
+    assert keyboard.interface == curses_interface
+    assert keyboard.loop == event_loop

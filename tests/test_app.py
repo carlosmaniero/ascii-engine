@@ -8,6 +8,20 @@ from ascii_engine.screen import Screen
 from tests.mocked_modules.asyncmock import AsyncMock
 
 
+class Subscription:
+        def __init__(self, event_loop, calls=3):
+            self.calls = calls
+            self.future = event_loop.create_future()
+
+        async def get_action(self):
+            self.calls -= 1
+            if self.calls == 0:
+                self.future.set_result(True)
+            return self.calls
+
+        def has_next(self):
+            return self.calls != 0
+
 
 def create_app(model, event_loop):
     view = Mock(return_value=Mock())
@@ -53,12 +67,12 @@ async def test_that_when_an_registered_action_returns_a_value_the_action_is_call
 
     await event_loop.run_in_executor(None, app.start)
     app.render_view = Mock()
-    subscription = Mock()
-    subscription.get_action = AsyncMock(return_value=51)
+    subscription = Subscription(event_loop, calls=1)
     app.register_subscription(subscription)
+    await subscription.future
 
-    await subscription.get_action.wait_for_call()
-    app.actor.assert_called_with(51, initial_model)
+    assert subscription.calls == 0
+    app.actor.assert_called_with(0, initial_model)
     assert app.model == app.actor.return_value
     assert app.render_view.called
     app.stop()
@@ -66,26 +80,12 @@ async def test_that_when_an_registered_action_returns_a_value_the_action_is_call
 
 @pytest.mark.asyncio
 async def test_that_when_an_registered_action_is_called_until_has_no_next_action(event_loop):
-    class Subscription:
-        def __init__(self):
-            self.calls = 3
-            self.future = event_loop.create_future()
-
-        async def get_action(self):
-            self.calls -= 1
-            if self.calls == 0:
-                self.future.set_result(True)
-            return self.calls
-
-        def has_next(self):
-            return self.calls != 0
-
     initial_model = 41
     app = create_app(initial_model, event_loop)
 
     await event_loop.run_in_executor(None, app.start)
     app.render_view = Mock()
-    subscription = Subscription()
+    subscription = Subscription(event_loop)
     app.register_subscription(subscription)
 
     await subscription.future

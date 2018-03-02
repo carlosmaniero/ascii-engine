@@ -49,8 +49,20 @@ class CursesInterface:
     def listen_keyboard(self):
         return self.window.getch()
 
+    def get_subscriptions(self, loop):
+        return [CursesKeyboardSubscription(self, loop)]
+
     def stop(self):
         self.window.keypad(False)
         curses.nocbreak()
         curses.echo()
         curses.endwin()
+
+
+class CursesKeyboardSubscription:
+    def __init__(self, interface, loop):
+        self.interface = interface
+        self.loop = loop
+
+    async def get_action(self):
+        return await self.loop.run_in_executor(None, self.interface.listen_keyboard)

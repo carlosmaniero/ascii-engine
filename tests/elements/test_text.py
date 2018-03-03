@@ -33,6 +33,14 @@ def test_text_has_pixel_representations():
         [Pixel('B'), Pixel('y'), Pixel('e')]
     ]
 
+def test_text_validate_if_pixels_are_different():
+    text = 'Hi\nBye'
+    text_element = Text(text)
+    assert text_element.get_pixels() != [
+        [Pixel('H'), Pixel('i'), Pixel(' ')],
+        [Pixel('B'), Pixel('i'), Pixel('e')]
+    ]
+
 def test_text_uses_the_given_foreground_color():
     text = 'Hi\nBye'
     text_element = Text(text)

@@ -1,4 +1,4 @@
-from ascii_engine.pixel import Pixel
+from ascii_engine.elements.fragments import ElementFragment
 
 
 class Text:
@@ -25,19 +25,10 @@ class Text:
         self.background_color = color
 
     def get_pixels(self):
-        default_pixel = self._create_pixel(' ')
-        pixels = [[default_pixel] * self.get_width()
-                  for _ in range(self.get_height())]
-
-        for line_index, line in enumerate(self.lines):
-            for char_index, char in enumerate(line):
-                pixels[line_index][char_index] = self._create_pixel(char)
-
-        return pixels
-
-    def _create_pixel(self, char):
-        return Pixel(
-            char=char,
-            foreground_color=self.foreground_color,
-            background_color=self.background_color
+        return ElementFragment(
+            self.lines,
+            self.get_width(),
+            self.get_height(),
+            self.background_color,
+            self.foreground_color
         )

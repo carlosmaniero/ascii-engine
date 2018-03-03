@@ -20,7 +20,8 @@ class App:
         self.interface.render(screen)
 
     def register_subscription(self, subscription):
-        asyncio.gather(self._call_subscription(subscription), loop=self.loop)
+        subscription_coro = self._call_subscription(subscription)
+        asyncio.ensure_future(subscription_coro, loop=self.loop)
 
     def register_subscriptions_from_interface(self):
         for subscription in self.interface.get_subscriptions(self.loop):

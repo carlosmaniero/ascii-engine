@@ -84,6 +84,15 @@ def test_that_curses_interface_read_the_input_from_curses():
     assert curses_interface.window.getch.called is True
 
 
+def test_that_the_interface_returns_the_screen_with_terminal_size():
+    curses_interface = CursesInterface()
+    curses_interface.window = Mock()
+    curses_interface.window.getmaxyx = Mock(return_value=(10, 20))
+    screen = curses_interface.get_screen()
+    assert screen.get_width() == 20
+    assert screen.get_height() == 10
+
+
 @pytest.mark.asyncio
 async def test_that_the_keyboard_subscription_get_the_keyboard_from_the_given_interface(event_loop):
     interface = Mock()

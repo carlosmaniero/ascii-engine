@@ -1,5 +1,6 @@
 import curses
 from ascii_engine.action import Action
+from ascii_engine.screen import Screen
 
 
 class CursesInterface:
@@ -14,6 +15,22 @@ class CursesInterface:
         self.window.keypad(True)
 
         self._render_window(screen.render())
+
+    def listen_keyboard(self):
+        return self.window.getch()
+
+    def get_subscriptions(self, loop):
+        return [CursesKeyboardSubscription(self, loop)]
+
+    def get_screen(self):
+        height, width = self.window.getmaxyx()
+        return Screen(width, height)
+
+    def stop(self):
+        self.window.keypad(False)
+        curses.nocbreak()
+        curses.echo()
+        curses.endwin()
 
     def _render_window(self, pixels):
         window = self.window
@@ -46,18 +63,6 @@ class CursesInterface:
             )
             self.pairs.append((term_fg, term_bg))
         return curses.color_pair(pair_index)
-
-    def listen_keyboard(self):
-        return self.window.getch()
-
-    def get_subscriptions(self, loop):
-        return [CursesKeyboardSubscription(self, loop)]
-
-    def stop(self):
-        self.window.keypad(False)
-        curses.nocbreak()
-        curses.echo()
-        curses.endwin()
 
 
 class CursesKeyboardSubscription:

@@ -1,4 +1,5 @@
 import asyncio
+from ascii_engine.interfaces import CursesInterface
 
 
 class App:
@@ -37,3 +38,7 @@ class App:
     def _block_loop(self):
         if not self.loop.is_running():
             self.loop.run_forever()
+
+
+def create_app(initial_model, draw, actor):
+    return App(CursesInterface(), initial_model, draw, actor)

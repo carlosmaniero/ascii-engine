@@ -1,6 +1,8 @@
-import pytest
 from unittest.mock import Mock, call
-from ascii_engine.app import App
+import pytest
+from tests.mocked_modules.curses import patch_curses
+from ascii_engine.app import App, create_app
+from ascii_engine.interfaces import CursesInterface
 
 
 class Subscription:
@@ -18,7 +20,7 @@ class Subscription:
         return self.calls != 0
 
 
-def create_app(model, event_loop):
+def create_mock_app(model, event_loop):
     view = Mock(return_value=Mock())
     actor = Mock()
     interface = Mock()
@@ -31,7 +33,7 @@ def create_app(model, event_loop):
 @pytest.mark.asyncio
 async def test_that_given_a_view_function_it_is_called_with_the_given_initial_model(event_loop):
     initial_model = 42
-    app = create_app(initial_model, event_loop)
+    app = create_mock_app(initial_model, event_loop)
     await event_loop.run_in_executor(None, app.start)
     app.view.assert_called_once_with(initial_model)
 
@@ -39,7 +41,7 @@ async def test_that_given_a_view_function_it_is_called_with_the_given_initial_mo
 @pytest.mark.asyncio
 async def test_that_it_register_all_interfaces_subscription(event_loop):
     initial_model = 42
-    app = create_app(initial_model, event_loop)
+    app = create_mock_app(initial_model, event_loop)
     app.interface.get_subscriptions = Mock(return_value=[
         Subscription(event_loop),
         Subscription(event_loop),
@@ -56,7 +58,7 @@ async def test_that_it_register_all_interfaces_subscription(event_loop):
 
 def test_that_when_the_app_render_is_called_it_call_the_view_and_send_the_result_to_interface(event_loop):
     initial_model = 42
-    app = create_app(initial_model, event_loop)
+    app = create_mock_app(initial_model, event_loop)
     app.model = 13
     app.render_view()
     app.view.assert_called_with(13)
@@ -67,7 +69,7 @@ def test_that_when_the_app_render_is_called_it_call_the_view_and_send_the_result
 @pytest.mark.asyncio
 async def test_that_the_when_app_starts_it_renders_the_view(event_loop):
     initial_model = 42
-    app = create_app(initial_model, event_loop)
+    app = create_mock_app(initial_model, event_loop)
     app.render_view = Mock()
     await event_loop.run_in_executor(None, app.start)
     assert app.render_view.called
@@ -77,7 +79,7 @@ async def test_that_the_when_app_starts_it_renders_the_view(event_loop):
 @pytest.mark.asyncio
 async def test_that_when_an_registered_action_returns_a_value_the_action_is_called_and_the_view_is_rendered(event_loop):
     initial_model = 41
-    app = create_app(initial_model, event_loop)
+    app = create_mock_app(initial_model, event_loop)
 
     await event_loop.run_in_executor(None, app.start)
     app.render_view = Mock()
@@ -95,7 +97,7 @@ async def test_that_when_an_registered_action_returns_a_value_the_action_is_call
 @pytest.mark.asyncio
 async def test_that_when_an_registered_action_is_called_until_has_no_next_action(event_loop):
     initial_model = 41
-    app = create_app(initial_model, event_loop)
+    app = create_mock_app(initial_model, event_loop)
 
     # await event_loop.run_in_executor(None, app.start)
     app.start()
@@ -112,7 +114,19 @@ async def test_that_when_an_registered_action_is_called_until_has_no_next_action
 def test_that_loop_just_run_forever_when_it_is_not_started():
     mock_forever = Mock()
     mock_forever.is_running = Mock(return_value=False)
-    app = create_app(0, mock_forever)
+    app = create_mock_app(0, mock_forever)
     app.start()
     assert mock_forever.is_running.called
     assert mock_forever.run_forever.called
+
+
+@patch_curses
+def test_that_loop_start_app_helper_creates_an_app_with_curses_interface():
+    draw = Mock()
+    actor = Mock()
+    model = Mock()
+    app = create_app(model, draw, actor)
+    assert isinstance(app.interface, CursesInterface)
+    assert app.actor == actor
+    assert app.model == model
+    assert app.view == draw

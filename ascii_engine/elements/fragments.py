@@ -49,7 +49,7 @@ class ElementFragment:
             yield line_fragment
 
     def __iter__(self):
-        return iter(self.get_pixels())
+        return self.get_pixels()
 
     def __eq__(self, other):
         other_list = list(other)

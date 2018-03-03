@@ -77,11 +77,21 @@ def test_that_given_a_foreground_and_background_a_curses_pair_is_created():
 @patch_curses
 def test_that_curses_interface_read_the_input_from_curses():
     curses_interface = CursesInterface()
-    curses_interface.window.getch = Mock(return_value=ord('a'))
+    curses_interface.window.get_wch = Mock(return_value='a')
 
     keycode = curses_interface.listen_keyboard()
     assert keycode == ord('a')
-    assert curses_interface.window.getch.called is True
+    assert curses_interface.window.get_wch.called is True
+
+
+@patch_curses
+def test_that_curses_interface_read_the_input_from_curses_given_a_special_key():
+    curses_interface = CursesInterface()
+    curses_interface.window.get_wch = Mock(return_value=297)
+
+    keycode = curses_interface.listen_keyboard()
+    assert keycode == 297
+    assert curses_interface.window.get_wch.called is True
 
 
 def test_that_the_interface_returns_the_screen_with_terminal_size():

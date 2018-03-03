@@ -17,7 +17,10 @@ class CursesInterface:
         self._render_window(screen.render())
 
     def listen_keyboard(self):
-        return self.window.getch()
+        char = self.window.get_wch()
+        if isinstance(char, str):
+            return ord(char)
+        return char
 
     def get_subscriptions(self, loop):
         return [CursesKeyboardSubscription(self, loop)]

@@ -89,7 +89,7 @@ def test_that_the_interface_returns_the_screen_with_terminal_size():
     curses_interface.window = Mock()
     curses_interface.window.getmaxyx = Mock(return_value=(10, 20))
     screen = curses_interface.get_screen()
-    assert screen.get_width() == 20
+    assert screen.get_width() == 19
     assert screen.get_height() == 10
 
 

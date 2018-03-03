@@ -1,7 +1,8 @@
-from unittest.mock import Mock, call
+from unittest.mock import Mock
 import pytest
 from tests.mocked_modules.curses import patch_curses
 from ascii_engine.app import App, create_app
+from ascii_engine.screen import Screen
 from ascii_engine.interfaces import CursesInterface
 
 
@@ -35,7 +36,7 @@ async def test_that_given_a_view_function_it_is_called_with_the_given_initial_mo
     initial_model = 42
     app = create_mock_app(initial_model, event_loop)
     await event_loop.run_in_executor(None, app.start)
-    app.view.assert_called_once_with(initial_model)
+    app.view.assert_called_once_with(app.interface.get_screen.return_value, initial_model)
 
 
 @pytest.mark.asyncio
@@ -58,10 +59,12 @@ async def test_that_it_register_all_interfaces_subscription(event_loop):
 
 def test_that_when_the_app_render_is_called_it_call_the_view_and_send_the_result_to_interface(event_loop):
     initial_model = 42
+    screen = Screen(1, 2)
     app = create_mock_app(initial_model, event_loop)
     app.model = 13
+    app.interface.get_screen = Mock(return_value=screen)
     app.render_view()
-    app.view.assert_called_with(13)
+    app.view.assert_called_with(screen, 13)
     app.interface.render.assert_called_once_with(app.view.return_value)
     app.stop()
 

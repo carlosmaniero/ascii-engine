@@ -16,8 +16,9 @@ class App:
         self._block_loop()
 
     def render_view(self):
-        screen = self.view(self.model)
-        self.interface.render(screen)
+        screen = self.interface.get_screen()
+        screen_to_render = self.view(screen, self.model)
+        self.interface.render(screen_to_render)
 
     def register_subscription(self, subscription):
         subscription_coro = self._call_subscription(subscription)

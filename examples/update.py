@@ -4,8 +4,7 @@ from ascii_engine.app import create_app
 from ascii_engine.colors import RGB
 
 
-def draw(model):
-    screen = Screen(40, 20)
+def draw(screen, model):
     if model.get('last_key') is not None:
         text_element = Text('You typed: ' + chr(model['last_key']))
         text_element.set_background_color(RGB(155, 200, 45))

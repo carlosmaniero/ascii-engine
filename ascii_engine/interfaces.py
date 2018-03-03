@@ -24,7 +24,7 @@ class CursesInterface:
 
     def get_screen(self):
         height, width = self.window.getmaxyx()
-        return Screen(width, height)
+        return Screen(width - 1, height)
 
     def stop(self):
         self.window.keypad(False)

@@ -85,13 +85,19 @@ def test_that_curses_interface_read_the_input_from_curses():
 
 
 @pytest.mark.asyncio
-async def _test_that_the_keyboard_subscription_get_the_keyboard_from_the_given_interface(event_loop):
+async def test_that_the_keyboard_subscription_get_the_keyboard_from_the_given_interface(event_loop):
     interface = Mock()
     interface.listen_keyboard = Mock(return_value=42)
     subscription = CursesKeyboardSubscription(interface, event_loop)
-    result = await subscription.get_action()
+    action = await subscription.get_action()
     assert interface.listen_keyboard.called
-    assert result == 42
+    assert action.name == 'keypress'
+    assert action.value == 42
+
+
+def test_that_the_keyboard_always_returns_that_has_next_item():
+    subscription = CursesKeyboardSubscription(Mock(), Mock())
+    assert subscription.has_next()
 
 
 @patch_curses

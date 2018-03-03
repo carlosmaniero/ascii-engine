@@ -11,16 +11,19 @@ class App:
 
     def start(self):
         self.render_view()
-        if not self.loop.is_running():
-            self.loop.run_forever()
+        self.register_subscriptions_from_interface()
+        self._block_loop()
 
     def render_view(self):
         screen = self.view(self.model)
         self.interface.render(screen)
 
     def register_subscription(self, subscription):
-        task = self.loop.create_task(self._call_subscription(subscription))
-        self.loop.call_soon(task)
+        asyncio.gather(self._call_subscription(subscription), loop=self.loop)
+
+    def register_subscriptions_from_interface(self):
+        for subscription in self.interface.get_subscriptions(self.loop):
+            self.register_subscription(subscription)
 
     def stop(self):
         self.loop.stop()
@@ -30,3 +33,7 @@ class App:
             action = await subscription.get_action()
             self.model = self.actor(action, self.model)
             self.render_view()
+
+    def _block_loop(self):
+        if not self.loop.is_running():
+            self.loop.run_forever()

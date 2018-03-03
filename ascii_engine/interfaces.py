@@ -1,4 +1,5 @@
 import curses
+from ascii_engine.action import Action
 
 
 class CursesInterface:
@@ -65,7 +66,11 @@ class CursesKeyboardSubscription:
         self.loop = loop
 
     async def get_action(self):
-        return await self.loop.run_in_executor(
+        keycode = await self.loop.run_in_executor(
             None,
             self.interface.listen_keyboard
         )
+        return Action('keypress', keycode)
+
+    def has_next(self):
+        return True

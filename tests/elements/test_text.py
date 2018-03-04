@@ -1,4 +1,5 @@
 from ascii_engine.elements.text import Text
+from ascii_engine.dimensions import Natural
 from ascii_engine import colors
 from ascii_engine.pixel import Pixel
 
@@ -9,20 +10,20 @@ RED = colors.RGB(255, 0, 0)
 def test_text_has_the_width_equals_the_text_size():
     text = 'My great text'
     text_element = Text(text)
-    assert text_element.get_width() == 13
+    assert text_element.get_width() == Natural(13)
 
 
 def test_text_has_the_height_equals_the_number_of_lines():
     text = 'My\ngreat\ntext'
     text_element = Text(text)
-    assert text_element.get_height() == 3
+    assert text_element.get_height() == Natural(3)
 
 
 def test_text_has_the_width_equals_the_length_of_the_biggest_line():
     text = 'My\ngreat\ntext\n!'
     text_element = Text(text)
-    assert text_element.get_width() == 5
-    assert text_element.get_height() == 4
+    assert text_element.get_width() == Natural(5)
+    assert text_element.get_height() == Natural(4)
 
 
 def test_text_has_pixel_representations():

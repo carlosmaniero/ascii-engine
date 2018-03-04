@@ -1,34 +1,23 @@
 from ascii_engine.elements.fragments import ElementFragment
+from ascii_engine.elements.base import BaseElement
+from ascii_engine.dimensions import Natural
 
 
-class Text:
+class Text(BaseElement):
     def __init__(self, text):
         self.lines = text.split('\n')
-        self.width = self._get_biggest_line_size()
-        self.height = len(self.lines)
-        self.foreground_color = None
-        self.background_color = None
-
-    def get_width(self):
-        return self.width
-
-    def get_height(self):
-        return self.height
-
-    def _get_biggest_line_size(self):
-        return max([len(line) for line in self.lines])
-
-    def set_foreground_color(self, color):
-        self.foreground_color = color
-
-    def set_background_color(self, color):
-        self.background_color = color
+        width = self._get_biggest_line_size()
+        height = len(self.lines)
+        super().__init__(Natural(width), Natural(height))
 
     def get_pixels(self):
         return ElementFragment(
             self.lines,
-            self.get_width(),
-            self.get_height(),
+            self.get_width().value,
+            self.get_height().value,
             self.background_color,
             self.foreground_color
         )
+
+    def _get_biggest_line_size(self):
+        return max([len(line) for line in self.lines])

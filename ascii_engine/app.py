@@ -3,21 +3,21 @@ from ascii_engine.interfaces import CursesInterface
 
 
 class App:
-    def __init__(self, interface, initial_model, view, actor):
+    def __init__(self, interface, initial_model, draw, actor):
         self.interface = interface
         self.model = initial_model
-        self.view = view
+        self.draw = draw
         self.loop = asyncio.new_event_loop()
         self.actor = actor
 
     def start(self):
-        self.render_view()
+        self.render_draw()
         self.register_subscriptions_from_interface()
         self._block_loop()
 
-    def render_view(self):
+    def render_draw(self):
         screen = self.interface.get_screen()
-        screen_to_render = self.view(screen, self.model)
+        screen_to_render = self.draw(screen, self.model)
         self.interface.render(screen_to_render)
 
     def register_subscription(self, subscription):
@@ -35,7 +35,7 @@ class App:
         while subscription.has_next():
             action = await subscription.get_action()
             self.model = self.actor(action, self.model)
-            self.render_view()
+            self.render_draw()
 
     def _block_loop(self):
         if not self.loop.is_running():

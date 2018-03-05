@@ -9,7 +9,7 @@ class Text(BaseElement):
         height = len(self.lines)
         super().__init__(width, height)
 
-    def get_pixels(self):
+    def to_pixels(self):
         return ElementFragment(
             self.lines,
             self.get_width(),

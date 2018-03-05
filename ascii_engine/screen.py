@@ -31,16 +31,18 @@ class ScreenFragment:
         self.screen = self._create_blank_screen()
 
     def add_element(self, element, coords):
-        for line_index, line in enumerate(element.get_pixels()):
-            for pixel_index, pixel in enumerate(line):
+        render_height = self.height - coords.y
+        render_width = self.width - coords.x
+
+        pixels = element.to_pixels()[:render_height]
+
+        for line_index, line in enumerate(pixels):
+            for pixel_index, pixel in enumerate(line[:render_width]):
                 pixel_coords = coords.add_y(line_index).add_x(pixel_index)
                 self.add_pixel(pixel_coords, pixel)
 
     def add_pixel(self, coords, pixel):
-        try:
-            self.screen[coords.get_y()][coords.get_x()] = pixel
-        except IndexError:
-            pass
+        self.screen[coords.get_y()][coords.get_x()] = pixel
 
     def get_screen(self):
         return self.screen

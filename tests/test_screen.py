@@ -25,7 +25,7 @@ def test_that_screen_render_a_given_element():
     screen = Screen(5, 1)
     text_element = Text('Hello')
     screen.add_element(text_element)
-    assert screen.render() == text_element.get_pixels()
+    assert screen.render() == text_element.to_pixels()
 
 
 def test_that_screen_do_element_overlap():
@@ -34,7 +34,7 @@ def test_that_screen_do_element_overlap():
     text_element2 = Text('Bye')
     screen.add_element(text_element1)
     screen.add_element(text_element2)
-    assert screen.render() == Text('Byelo').get_pixels()
+    assert screen.render() == Text('Byelo').to_pixels()
 
 
 def test_that_screen_render_elements_given_an_possition():
@@ -43,10 +43,10 @@ def test_that_screen_render_elements_given_an_possition():
     text_element2 = Text('Bye')
     screen.add_element(text_element1)
     screen.add_element(text_element2, coords=Coords(0, 1))
-    assert screen.render() == Text('Hello\nBye').get_pixels()
+    assert screen.render() == Text('Hello\nBye').to_pixels()
 
 
 def test_that_screen_pixels_out_of_screen():
     screen = Screen(5, 1)
     screen.add_element(Text('Hello'), Coords(1, 0))
-    screen.render() == Text(' Hell').get_pixels()
+    screen.render() == Text(' Hell').to_pixels()

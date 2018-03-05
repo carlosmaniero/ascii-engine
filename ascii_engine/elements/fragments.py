@@ -28,6 +28,16 @@ class LineFragment:
     def __iter__(self):
         return self.get_pixels()
 
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            line = self.line[item]
+            return LineFragment(
+                line,
+                len(line),
+                self.background_color,
+                self.foreground_color
+            )
+
 
 class ElementFragment:
     def __init__(self, lines, width, height,
@@ -57,3 +67,14 @@ class ElementFragment:
             if other_line != list(line):
                 return False
         return True
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            lines = self.lines[item]
+            return ElementFragment(
+                lines,
+                self.width,
+                len(lines),
+                self.background_color,
+                self.foreground_color
+            )

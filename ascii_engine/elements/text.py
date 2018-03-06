@@ -1,4 +1,4 @@
-from ascii_engine.elements.fragments import ElementFragment
+from ascii_engine.elements.fragments import MultiLineFragment
 from ascii_engine.elements.base import BaseElement
 
 
@@ -10,12 +10,10 @@ class Text(BaseElement):
         super().__init__(width, height)
 
     def to_pixels(self):
-        return ElementFragment(
+        return MultiLineFragment(
             self.lines,
-            self.get_width(),
-            self.get_height(),
-            self.background_color,
-            self.foreground_color
+            self.foreground_color,
+            self.background_color
         )
 
     def _get_biggest_line_size(self):

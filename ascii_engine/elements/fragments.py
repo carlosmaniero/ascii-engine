@@ -60,7 +60,6 @@ class ContainerizeLineFragment:
                     self.__background_color):
                 yield pixel
 
-
     def __format_pixel(self, pixel):
         if pixel.get_background_color() is None:
             pixel = Pixel(
@@ -94,7 +93,11 @@ class ContainerizeLineFragment:
                 if item < len(self.__line_fragment):
                     return self.__format_pixel(self.__line_fragment[item])
                 elif item < self.__width:
-                    return Pixel(' ', self.__foreground_color, self.__background_color)
+                    return Pixel(
+                        char=' ',
+                        foreground_color=self.__foreground_color,
+                        background_color=self.__background_color
+                    )
 
         raise IndexError
 

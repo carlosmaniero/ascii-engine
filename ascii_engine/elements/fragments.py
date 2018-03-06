@@ -2,13 +2,13 @@ from ascii_engine.pixel import Pixel
 
 
 class LineFragment:
-    def __init__(self, line, width, background_color, foreground_color):
+    def __init__(self, line, background_color, foreground_color):
         self.line = line
-        self.width = width
+        self.width = len(line)
         self.background_color = background_color
         self.foreground_color = foreground_color
 
-    def get_pixels(self):
+    def to_pixels(self):
         for char in self._normalize_line():
             yield self._create_pixel(char)
 
@@ -26,17 +26,19 @@ class LineFragment:
         )
 
     def __iter__(self):
-        return self.get_pixels()
+        return self.to_pixels()
 
     def __getitem__(self, item):
         if isinstance(item, slice):
             line = self.line[item]
             return LineFragment(
                 line,
-                len(line),
                 self.background_color,
                 self.foreground_color
             )
+
+    def __repr__(self):
+        return repr([repr(pixel) for pixel in self.to_pixels()])
 
 
 class ElementFragment:
@@ -48,25 +50,17 @@ class ElementFragment:
         self.background_color = background_color
         self.foreground_color = foreground_color
 
-    def get_pixels(self):
+    def to_pixels(self):
         for line in self.lines:
             line_fragment = LineFragment(
                 line,
-                self.width,
                 self.background_color,
                 self.foreground_color
             )
             yield line_fragment
 
     def __iter__(self):
-        return self.get_pixels()
-
-    def __eq__(self, other):
-        other_list = list(other)
-        for other_line, line in zip(other_list, self.get_pixels()):
-            if other_line != list(line):
-                return False
-        return True
+        return self.to_pixels()
 
     def __getitem__(self, item):
         if isinstance(item, slice):
@@ -78,3 +72,73 @@ class ElementFragment:
                 self.background_color,
                 self.foreground_color
             )
+
+
+class ContainerLineFragment:
+    def __init__(self, line_fragment, width,
+                 background_color, foreground_color):
+        self.line_fragment = line_fragment
+        self.width = width
+        self.background_color = background_color
+        self.foreground_color = foreground_color
+
+    def to_pixels(self):
+        for pixel in self.line_fragment[:self.width]:
+            if pixel.get_background_color() is None:
+                pixel = Pixel(
+                    pixel.get_char(),
+                    background_color=self.background_color,
+                    foreground_color=pixel.get_foreground_color()
+                )
+            yield pixel
+
+        if self.line_fragment.width < self.width:
+            total_of_blank_chars = self.width - self.line_fragment.width
+            fill_with = ' ' * total_of_blank_chars
+            for pixel in LineFragment(
+                    fill_with,
+                    self.background_color,
+                    self.foreground_color):
+                yield pixel
+
+    def __iter__(self):
+        return self.to_pixels()
+
+    def __getitem__(self, item):
+        return self.to_pixels()
+
+
+class VerticalFragment:
+    def __init__(self, fragments, width, height,
+                 background_color, foreground_color):
+        self.fragments = fragments
+        self.width = width
+        self.height = height
+        self.background_color = background_color
+        self.foreground_color = foreground_color
+
+    def to_pixels(self):
+        total_of_lines = 0
+        for fragment in self.fragments:
+            for line_fragment in fragment:
+                total_of_lines += 1
+                yield ContainerLineFragment(
+                    line_fragment,
+                    self.width,
+                    self.background_color,
+                    self.foreground_color
+                )
+
+        if total_of_lines < self.height:
+            for _ in range(self.height - total_of_lines):
+                yield LineFragment(
+                    ' ' * self.width,
+                    self.background_color,
+                    self.foreground_color
+                )
+
+    def __iter__(self):
+        return self.to_pixels()
+
+    def __getitem__(self, item):
+        return self.to_pixels()

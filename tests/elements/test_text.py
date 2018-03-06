@@ -1,7 +1,8 @@
+import pytest
 from ascii_engine.elements.text import Text
-from ascii_engine.dimensions import Natural
 from ascii_engine import colors
 from ascii_engine.pixel import Pixel
+from tests.asserts import assertPixelsAreEquals
 
 
 RED = colors.RGB(255, 0, 0)
@@ -29,18 +30,19 @@ def test_text_has_the_width_equals_the_length_of_the_biggest_line():
 def test_text_has_pixel_representations():
     text = 'Hi\nBye'
     text_element = Text(text)
-    assert text_element.to_pixels() == [
-        [Pixel('H'), Pixel('i'), Pixel(' ')],
+    assertPixelsAreEquals(text_element.to_pixels(), [
+        [Pixel('H'), Pixel('i')],
         [Pixel('B'), Pixel('y'), Pixel('e')]
-    ]
+    ])
 
 def test_text_validate_if_pixels_are_different():
     text = 'Hi\nBye'
     text_element = Text(text)
-    assert text_element.to_pixels() != [
-        [Pixel('H'), Pixel('i'), Pixel(' ')],
-        [Pixel('B'), Pixel('i'), Pixel('e')]
-    ]
+    with pytest.raises(AssertionError):
+        assertPixelsAreEquals(text_element.to_pixels(), [
+            [Pixel('H'), Pixel('i'), Pixel(' ')],
+            [Pixel('B'), Pixel('i'), Pixel('e')]
+        ])
 
 def test_text_uses_the_given_foreground_color():
     text = 'Hi\nBye'

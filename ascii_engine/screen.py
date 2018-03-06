@@ -21,7 +21,7 @@ class Screen:
         fragment = ScreenFragment(self.get_width(), self.get_height())
         for coords, element in self.elements:
             fragment.add_element(element, coords)
-        return fragment.get_screen()
+        return fragment.to_pixels()
 
 
 class ScreenFragment:
@@ -44,7 +44,7 @@ class ScreenFragment:
     def add_pixel(self, coords, pixel):
         self.screen[coords.get_y()][coords.get_x()] = pixel
 
-    def get_screen(self):
+    def to_pixels(self):
         return self.screen
 
     def _create_empty_line(self):

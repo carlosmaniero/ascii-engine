@@ -1,5 +1,4 @@
 from ascii_engine.elements.text import Text
-from ascii_engine.screen import Screen
 from ascii_engine.app import create_app
 from ascii_engine.colors import RGB
 

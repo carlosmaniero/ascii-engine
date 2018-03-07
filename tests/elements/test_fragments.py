@@ -318,15 +318,6 @@ def test_that_line_fragment_raises_index_error_given_a_invalid_index():
         StringLineToPixelFragment("Hi")["it is not a valid index"]
 
 
-def test_that_line_fragment_colorizes_the_text():
-    assert list(StringLineToPixelFragment("Hi", RGB(200, 100, 0), RGB(0, 100, 200))) == [
-        Pixel('H', RGB(200, 100, 0), RGB(0, 100, 200)),
-        Pixel('i', RGB(200, 100, 0), RGB(0, 100, 200))
-    ]
-    assert StringLineToPixelFragment("Hi", RGB(200, 100, 0), RGB(0, 100, 200))[0] == Pixel(
-        'H', RGB(200, 100, 0), RGB(0, 100, 200)
-    )
-
 
 def test_that_block_line_fragment_renders_each_line_of_a_given_line():
     text = "Hello, World!"
@@ -377,83 +368,6 @@ def test_that_block_line_fragment_deals_with_slices():
     assert list(fragment[4:14:4]) == [Pixel('o'), Pixel('o'), Pixel(' ')]
     assert list(empty_fragment[::4]) == []
 
-
-def test_that_block_line_fragment_colorizes_the_text():
-    fragment = BlockPixelLineFragment(
-        StringLineToPixelFragment("Hi"),
-        3,
-        RGB(200, 100, 0),
-        RGB(0, 100, 200)
-    )
-
-    assert list(fragment) == [
-        Pixel('H', RGB(200, 100, 0), RGB(0, 100, 200)),
-        Pixel('i', RGB(200, 100, 0), RGB(0, 100, 200)),
-        Pixel(' ', RGB(200, 100, 0), RGB(0, 100, 200))
-    ]
-    assert fragment[0] == Pixel(
-        'H', RGB(200, 100, 0), RGB(0, 100, 200)
-    )
-
-
-def test_that_block_line_fragment_use_the_text_background_when_given():
-    fragment = BlockPixelLineFragment(
-        StringLineToPixelFragment(
-            line='Hi',
-            background_color=RGB(1, 2, 3)
-        ),
-        width=3,
-        foreground_color=RGB(0, 0, 0),
-        background_color=RGB(1, 1, 1)
-    )
-
-    assert list(fragment) == [
-        Pixel('H', foreground_color=RGB(0, 0, 0), background_color=RGB(1, 2, 3)),
-        Pixel('i', foreground_color=RGB(0, 0, 0), background_color=RGB(1, 2, 3)),
-        Pixel(' ', foreground_color=RGB(0, 0, 0), background_color=RGB(1, 1, 1)),
-    ]
-
-    assert fragment[0] == Pixel(
-        char='H',
-        foreground_color=RGB(0, 0, 0),
-        background_color=RGB(1, 2, 3)
-    )
-
-    assert fragment[2] == Pixel(
-        char=' ',
-        foreground_color=RGB(0, 0, 0),
-        background_color=RGB(1, 1, 1)
-    )
-
-
-def test_that_block_line_fragment_use_the_text_foreground_when_given():
-    fragment = BlockPixelLineFragment(
-        StringLineToPixelFragment(
-            line='Hi',
-            foreground_color=RGB(3, 2, 1)
-        ),
-        width=3,
-        foreground_color=RGB(0, 0, 0),
-        background_color=RGB(1, 1, 1)
-    )
-
-    assert list(fragment) == [
-        Pixel('H', foreground_color=RGB(3, 2, 1), background_color=RGB(1, 1, 1)),
-        Pixel('i', foreground_color=RGB(3, 2, 1), background_color=RGB(1, 1, 1)),
-        Pixel(' ', foreground_color=RGB(0, 0, 0), background_color=RGB(1, 1, 1)),
-    ]
-
-    assert fragment[0] == Pixel(
-        char='H',
-        foreground_color=RGB(3, 2, 1),
-        background_color=RGB(1, 1, 1)
-    )
-
-    assert fragment[2] == Pixel(
-        char=' ',
-        foreground_color=RGB(0, 0, 0),
-        background_color=RGB(1, 1, 1)
-    )
 
 
 def test_that_block_line_fragment_deals_with_indexs():
@@ -517,6 +431,22 @@ def test_that_block_fragment_can_blocks_only_the_width():
         iterations += 1
 
     assert iterations == len(expected_lines)
+
+
+def test_that_block_fragment_works_with_slices_and_index():
+    lines = [
+        [Pixel('a'), Pixel('b'), Pixel('c')],
+        [Pixel('d'), Pixel('e'), Pixel('f')],
+    ]
+
+    fragment = BlockPixelFragment(
+        lines_fragment=lines,
+        width=3
+    )
+
+    assert fragment_to_list(fragment[1:]) == lines[1:]
+    assert fragment_to_list(fragment[:1]) == lines[:1]
+    assert list(fragment[1]) == lines[1]
 
 
 def test_that_block_fragment_truncate_the_contant_if_it_exeeds_width_and_height():

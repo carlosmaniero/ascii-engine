@@ -1,7 +1,7 @@
 from ascii_engine.pixel import Pixel
 
 
-class LineFragment:
+class StringLineToPixelFragment:
     def __init__(self, line, foreground_color=None, background_color=None):
         self.__line = line
         self.__background_color = background_color
@@ -21,7 +21,7 @@ class LineFragment:
     def __getitem__(self, item):
         if isinstance(item, slice):
             line = self.__line[item]
-            return LineFragment(
+            return StringLineToPixelFragment(
                 line,
                 self.__foreground_color,
                 self.__background_color
@@ -35,7 +35,41 @@ class LineFragment:
         return len(self.__line)
 
 
-class ContainerizeLineFragment:
+class MultiLineStringToPixelFragment:
+    def __init__(self, lines, foreground_color=None, background_color=None):
+        self.__lines = lines
+        self.__background_color = background_color
+        self.__foreground_color = foreground_color
+
+    def __iter__(self):
+        for line in self.__lines:
+            yield self.__create_line_fragment(line)
+
+    def __create_line_fragment(self, line):
+        return StringLineToPixelFragment(
+            line=line,
+            background_color=self.__background_color,
+            foreground_color=self.__foreground_color
+        )
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            lines = self.__lines[item]
+            return MultiLineStringToPixelFragment(
+                lines,
+                self.__foreground_color,
+                self.__background_color
+            )
+        elif isinstance(item, int):
+            return self.__create_line_fragment(self.__lines[item])
+
+        raise IndexError
+
+    def __len__(self):
+        return len(self.__lines)
+
+
+class BlockPixelLineFragment:
     def __init__(self, line_fragment, width,
                  foreground_color=None, background_color=None):
         self.__line_fragment = line_fragment
@@ -54,7 +88,7 @@ class ContainerizeLineFragment:
         if len(self.__line_fragment) < self.__width:
             total_of_blank_chars = self.__width - len(self.__line_fragment)
             fill_with = ' ' * total_of_blank_chars
-            for pixel in LineFragment(
+            for pixel in StringLineToPixelFragment(
                     fill_with,
                     self.__foreground_color,
                     self.__background_color):
@@ -82,7 +116,7 @@ class ContainerizeLineFragment:
         if isinstance(item, slice):
             line_fragment = self.__line_fragment[item]
 
-            return ContainerizeLineFragment(
+            return BlockPixelLineFragment(
                 line_fragment,
                 self.__calculate_slice_length(item),
                 self.__foreground_color,
@@ -116,38 +150,105 @@ class ContainerizeLineFragment:
         return new_length
 
 
-class MultiLineFragment:
-    def __init__(self, lines, foreground_color=None, background_color=None):
-        self.__lines = lines
-        self.__background_color = background_color
-        self.__foreground_color = foreground_color
+class BlockPixelFragment:
+    def __init__(self, lines_fragment, width=None, height=None):
+        self.lines_fragment = lines_fragment
+        self.width = width
+        self.height = height
+
+        if self.width is None:
+            self.width = self.__get_max_line_width()
+
+        if self.height is None:
+            self.height = len(self.lines_fragment)
 
     def __iter__(self):
-        for line in self.__lines:
-            yield self.__create_line_fragment(line)
+        for line in self.lines_fragment[:self.height]:
+            yield BlockPixelLineFragment(line, self.width)
 
-    def __create_line_fragment(self, line):
-        return LineFragment(
-            line=line,
-            background_color=self.__background_color,
-            foreground_color=self.__foreground_color
+        if len(self.lines_fragment) < self.height:
+            for _ in range(self.height - len(self.lines_fragment)):
+                yield BlockPixelLineFragment([], self.width)
+
+    def __len__(self):
+        return self.height
+
+    def __get_max_line_width(self):
+        if len(self.lines_fragment) == 0:
+            return 0
+        bigger_line = max(self.lines_fragment, key=len)
+        return len(bigger_line)
+
+
+class ColorizeLinePixelsFragment:
+    def __init__(self, line, foreground_color=None, background_color=None):
+        self.__line = line
+        self.__foreground_color = foreground_color
+        self.__background_color = background_color
+
+    def __iter__(self):
+        for pixel in self.__line:
+            yield self.__apply(pixel)
+
+    def __apply(self, pixel):
+        fg_color = pixel.get_foreground_color() or self.__foreground_color
+        bg_color = pixel.get_background_color() or self.__background_color
+
+        return Pixel(
+            pixel.get_char(),
+            foreground_color=fg_color,
+            background_color=bg_color
         )
+
+    def __len__(self):
+        return len(self.__line)
 
     def __getitem__(self, item):
         if isinstance(item, slice):
-            lines = self.__lines[item]
-            return MultiLineFragment(
-                lines,
+            line = self.__line[item]
+            return ColorizeLinePixelsFragment(
+                line,
                 self.__foreground_color,
                 self.__background_color
             )
         elif isinstance(item, int):
-            return self.__create_line_fragment(self.__lines[item])
+            return self.__apply(self.__line[item])
 
         raise IndexError
 
+
+class ColorizeMultiLinePixelsFragment:
+    def __init__(self, lines, foreground_color=None, background_color=None):
+        self.__lines = lines
+        self.__foreground_color = foreground_color
+        self.__background_color = background_color
+
+    def __iter__(self):
+        for line in self.__lines:
+            yield self.__apply(line)
+
+    def __apply(self, line):
+        return ColorizeLinePixelsFragment(
+            line,
+            self.__foreground_color,
+            self.__background_color
+        )
+
     def __len__(self):
         return len(self.__lines)
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            lines = self.__lines[item]
+            return ColorizeMultiLinePixelsFragment(
+                lines,
+                self.__foreground_color,
+                self.__background_color
+            )
+        if isinstance(item, int):
+            return self.__apply(self.__lines[item])
+
+        raise IndexError
 
 
 class VerticalFragment:
@@ -164,7 +265,7 @@ class VerticalFragment:
         for fragment in self.fragments:
             for line_fragment in fragment:
                 total_of_lines += 1
-                yield ContainerizeLineFragment(
+                yield BlockPixelLineFragment(
                     line_fragment,
                     self.width,
                     self.foreground_color,
@@ -173,11 +274,11 @@ class VerticalFragment:
 
         if total_of_lines < self.height:
             for _ in range(self.height - total_of_lines):
-                yield LineFragment(
+                yield StringLineToPixelFragment(
                     ' ' * self.width,
                     self.foreground_color,
                     self.background_color
                 )
 
     def __getitem__(self, item):
-        return self.to_pixels()
+        return self.__iter__()

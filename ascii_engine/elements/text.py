@@ -1,4 +1,4 @@
-from ascii_engine.elements.fragments import MultiLineFragment
+from ascii_engine.elements.fragments import MultiLineStringToPixelFragment
 from ascii_engine.elements.base import BaseElement
 
 
@@ -10,7 +10,7 @@ class Text(BaseElement):
         super().__init__(width, height)
 
     def to_pixels(self):
-        return MultiLineFragment(
+        return MultiLineStringToPixelFragment(
             self.lines,
             self.foreground_color,
             self.background_color

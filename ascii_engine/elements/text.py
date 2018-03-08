@@ -1,5 +1,5 @@
-from ascii_engine.elements.fragments import MultiLineStringToPixelFragment
-from ascii_engine.elements.fragments import ColorizeMultiLinePixelsFragment
+from ascii_engine.fragments.converter import MultiLineStringToPixelFragment
+from ascii_engine.fragments.colorize import ColorizeMultiLinePixelsFragment
 from ascii_engine.elements.base import BaseElement
 
 

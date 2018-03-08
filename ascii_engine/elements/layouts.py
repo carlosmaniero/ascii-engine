@@ -1,8 +1,8 @@
 from ascii_engine.elements.base import BaseElement
-from ascii_engine.elements.fragments import BlockPixelFragment
-from ascii_engine.elements.fragments import ColorizeMultiLinePixelsFragment
-from ascii_engine.elements.fragments import JoinMultiLineVerticallyFragment
-from ascii_engine.elements.fragments import ColorizeMultiLinePixelsFragment
+from ascii_engine.fragments.block import BlockPixelFragment
+from ascii_engine.fragments.colorize import ColorizeMultiLinePixelsFragment
+from ascii_engine.fragments.join import JoinMultiLineVerticallyFragment
+from ascii_engine.fragments.colorize import ColorizeMultiLinePixelsFragment
 
 
 class VerticalLayout(BaseElement):

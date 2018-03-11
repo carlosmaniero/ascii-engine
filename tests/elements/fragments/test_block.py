@@ -60,7 +60,6 @@ def test_that_block_line_fragment_deals_with_slices():
     assert list(empty_fragment[::4]) == []
 
 
-
 def test_that_block_line_fragment_deals_with_indexs():
     given_text = "Hello, World"
     given_fragment = [Pixel(char) for char in given_text]
@@ -101,7 +100,6 @@ def test_that_block_fragment_renders_each_line_of_a_given_line():
     assert iterations == len(expected_lines)
 
 
-
 def test_that_block_fragment_can_blocks_only_the_width():
     expected_lines = [
         [Pixel('a'), Pixel('b'), Pixel(' ')],
@@ -134,12 +132,21 @@ def test_that_block_fragment_works_with_slices_and_index():
 
     fragment = BlockPixelFragment(
         lines_fragment=lines,
-        width=3
+        width=3,
+        height=3
     )
 
-    assert fragment_to_list(fragment[1:]) == lines[1:]
-    assert fragment_to_list(fragment[:1]) == lines[:1]
-    assert list(fragment[1]) == lines[1]
+    expected_empty_line = [Pixel(' ') for _ in range(3)]
+    expected_block = lines.copy()
+    expected_block.append(expected_empty_line)
+
+    assert fragment_to_list(fragment[1:]) == expected_block[1:]
+    assert fragment_to_list(fragment[:1]) == expected_block[:1]
+    assert list(fragment[1]) == expected_block[1]
+    assert list(fragment[2]) == expected_block[2]
+
+    with pytest.raises(IndexError):
+        fragment[3]
 
 
 def test_that_block_fragment_truncate_the_contant_if_it_exeeds_width_and_height():
@@ -202,3 +209,12 @@ def test_that_block_fragment_has_the_length_equal_the_given_height():
 
 def test_that_all_lines_of_block_fragment_is_equal_the_given_width():
     assert all(len(line) == 3 for line in BlockPixelFragment([], height=3, width=3))
+
+
+def test_that_when_a_block_is_called_by_index_it_always_returns_a_blocked_line():
+    line = [
+        [Pixel('a'), Pixel('b')],
+        [Pixel('c'), Pixel('d'), Pixel('e')]
+    ]
+
+    assert list(BlockPixelFragment(line)[0]) == [Pixel('a'), Pixel('b'), Pixel(' ')]

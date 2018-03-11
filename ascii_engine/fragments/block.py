@@ -52,6 +52,13 @@ class BlockPixelFragment(BaseFragment):
         yield from super().__iter__()
         yield from self.__complete_lines()
 
+    def _get_index(self, index):
+        if index < len(self._get_fragment()):
+            return self._apply(self._get_fragment()[index])
+        elif index < self.height:
+            return self._apply([])
+        raise IndexError
+
     def __complete_lines(self):
         if len(self._get_fragment()) < self.height:
             for _ in range(self.height - len(self._get_fragment())):

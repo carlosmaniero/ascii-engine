@@ -78,6 +78,32 @@ def test_that_colorized_line_pixels_accepts_slices():
     assert list(fragment[::2]) == expected_line_pixels[::2]
 
 
+def test_that_colorized_line_pixels_colorize_just_empty_pixels():
+    given_background_color = RGB(1, 2, 3)
+    line = [
+        Pixel(
+            str(i), background_color=given_background_color
+        ) for i in range(3)
+    ] + [Pixel(str(i)) for i in range(3)]
+
+    expected_background_color = RGB(3, 2, 1)
+    expected_line = [
+        Pixel(
+            str(i), background_color=given_background_color
+        )
+        for i in range(3)
+    ] + [
+        Pixel(
+            str(i), background_color=expected_background_color
+        ) for i in range(3)
+    ]
+
+    assert list(ColorizeLinePixelsFragment(
+        line,
+        background_color=expected_background_color
+    )) == expected_line
+
+
 def test_that_colorized_line_pixels_accepts_indexing():
     text = "Hello, World"
 

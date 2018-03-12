@@ -1,6 +1,8 @@
 from unittest.mock import Mock
 import pytest
-from tests.mocked_modules.curses import mocked_curses, patch_curses
+import time
+
+from tests.mocked_modules.curses import mocked_curses, patch_curses, setup_curses
 from ascii_engine.interfaces import CursesInterface, CursesKeyboardSubscription
 from ascii_engine.screen import Screen
 from ascii_engine.elements.text import Text
@@ -9,6 +11,13 @@ from ascii_engine.colors import RGB
 
 DEFAULT_PAIR = 1
 
+
+async def wait_for_render(curses_interface, event_loop):
+    await event_loop.run_in_executor(
+        curses_interface.render_interface.executor,
+        time.sleep,
+        0
+    )
 
 @patch_curses
 def test_that_interface_is_well_configured():
@@ -20,13 +29,16 @@ def test_that_interface_is_well_configured():
     curses_interface.window.keypad.assert_called_with(True)
 
 
-@patch_curses
-def test_that_all_pixels_are_send_to_screen():
+@pytest.mark.asyncio
+async def test_that_all_pixels_are_send_to_screen(event_loop):
+    setup_curses()
     curses_interface = CursesInterface()
     text_element = Text('ab\ncd')
     screen = Screen(2, 2)
     screen.add_element(text_element)
     curses_interface.render(screen)
+
+    await wait_for_render(curses_interface, event_loop)
 
     curses_interface.window.addstr.assert_any_call(0, 0, 'a', DEFAULT_PAIR)
     curses_interface.window.addstr.assert_any_call(0, 1, 'b', DEFAULT_PAIR)

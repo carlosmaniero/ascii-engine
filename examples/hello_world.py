@@ -7,7 +7,7 @@ from ascii_engine.colors import RGB
 
 if __name__ == '__main__':
     curses_interface = CursesInterface()
-    screen = curses_interface.get_screen()
+    screen = curses_interface.create_empty_screen()
 
     text_element = Text('Hello, World!')
     text_element.set_foreground_color(RGB(255, 0, 0))

@@ -3,7 +3,7 @@ import pytest
 import time
 
 from tests.mocked_modules.curses import mocked_curses, patch_curses, setup_curses
-from ascii_engine.interfaces import CursesInterface, CursesKeyboardSubscription
+from ascii_engine.interfaces.curses_interface.render import CursesRender
 from ascii_engine.screen import Screen
 from ascii_engine.elements.text import Text
 from ascii_engine.colors import RGB
@@ -21,7 +21,7 @@ async def wait_for_render(curses_interface, event_loop):
 
 @patch_curses
 def test_that_interface_is_well_configured():
-    curses_interface = CursesInterface()
+    curses_interface = CursesRender()
     assert mocked_curses.initscr.called
     assert mocked_curses.start_color.called
     assert mocked_curses.noecho.called
@@ -32,7 +32,7 @@ def test_that_interface_is_well_configured():
 @pytest.mark.asyncio
 async def test_that_all_pixels_are_send_to_screen(event_loop):
     setup_curses()
-    curses_interface = CursesInterface()
+    curses_interface = CursesRender()
     text_element = Text('ab\ncd')
     screen = Screen(2, 2)
     screen.add_element(text_element)
@@ -48,7 +48,7 @@ async def test_that_all_pixels_are_send_to_screen(event_loop):
 
 @patch_curses
 def test_that_the_terminal_is_well_reconfigured_after_stop_call():
-    curses_interface = CursesInterface()
+    curses_interface = CursesRender()
     curses_interface.stop()
 
     curses_interface.window.keypad.assert_called_with(False)
@@ -71,7 +71,7 @@ async def test_that_given_a_foreground_and_background_a_curses_pair_is_created(e
     screen = Screen(2, 2)
     screen.add_element(text_element)
 
-    curses_interface = CursesInterface()
+    curses_interface = CursesRender()
     curses_interface.render(screen)
 
     await wait_for_render(curses_interface, event_loop)
@@ -88,47 +88,11 @@ async def test_that_given_a_foreground_and_background_a_curses_pair_is_created(e
     curses_interface.window.addstr.assert_any_call(1, 1, 'd', 'color_1')
 
 
-@pytest.mark.asyncio
-async def test_that_curses_interface_read_the_input_from_curses(event_loop):
-    setup_curses()
-    keyboard = CursesKeyboardSubscription(event_loop)
-    keyboard.interface.get_wch = Mock(return_value='a')
-
-    keycode = keyboard.listen_keyboard()
-    assert keycode == ord('a')
-    assert keyboard.interface.get_wch.called is True
-
-
-@pytest.mark.asyncio
-async def test_that_curses_interface_read_the_input_from_curses_given_a_special_key(event_loop):
-    keyboard = CursesKeyboardSubscription(event_loop)
-    keyboard.interface.get_wch = Mock(return_value=297)
-
-    keycode = keyboard.listen_keyboard()
-    assert keycode == 297
-    assert keyboard.interface.get_wch.called is True
-
-
 def test_that_the_interface_returns_the_screen_with_terminal_size():
-    curses_interface = CursesInterface()
+    curses_interface = CursesRender()
     curses_interface.window = Mock()
     curses_interface.window.getmaxyx = Mock(return_value=(10, 20))
-    screen = curses_interface.get_screen()
+    screen = curses_interface.create_empty_screen()
     assert screen.get_width() == 19
     assert screen.get_height() == 10
-
-
-@pytest.mark.asyncio
-async def test_that_the_keyboard_subscription_get_the_keyboard_from_the_given_interface(event_loop):
-    subscription = CursesKeyboardSubscription(event_loop)
-    subscription.interface.get_wch = Mock(return_value=42)
-    action = await subscription.get_action()
-    assert subscription.interface.get_wch.called
-    assert action.name == 'keypress'
-    assert action.value == 42
-
-
-def test_that_the_keyboard_always_returns_that_has_next_item(event_loop):
-    subscription = CursesKeyboardSubscription(event_loop)
-    assert subscription.has_next()
 

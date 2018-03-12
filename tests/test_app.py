@@ -3,7 +3,7 @@ import pytest
 from tests.mocked_modules.curses import patch_curses
 from ascii_engine.app import App, create_app
 from ascii_engine.screen import Screen
-from ascii_engine.interfaces import CursesInterface
+from ascii_engine.interfaces.curses_interface.render import CursesRender
 
 
 class Subscription:
@@ -36,7 +36,7 @@ async def test_that_given_a_draw_function_it_is_called_with_the_given_initial_mo
     initial_model = 42
     app = create_mock_app(initial_model, event_loop)
     await event_loop.run_in_executor(None, app.start)
-    app.draw.assert_called_once_with(app.interface.get_screen.return_value, initial_model)
+    app.draw.assert_called_once_with(app.interface.create_empty_screen.return_value, initial_model)
 
 
 def test_that_when_the_app_render_is_called_it_call_the_draw_and_send_the_result_to_interface(event_loop):
@@ -44,7 +44,7 @@ def test_that_when_the_app_render_is_called_it_call_the_draw_and_send_the_result
     screen = Screen(1, 2)
     app = create_mock_app(initial_model, event_loop)
     app.model = 13
-    app.interface.get_screen = Mock(return_value=screen)
+    app.interface.create_empty_screen = Mock(return_value=screen)
     app.render_draw()
     app.draw.assert_called_with(screen, 13)
     app.interface.render.assert_called_once_with(app.draw.return_value)
@@ -111,7 +111,7 @@ def test_that_loop_start_app_helper_creates_an_app_with_curses_interface():
     actor = Mock()
     model = Mock()
     app = create_app(model, draw, actor)
-    assert isinstance(app.interface, CursesInterface)
+    assert isinstance(app.interface, CursesRender)
     assert app.actor == actor
     assert app.model == model
     assert app.draw == draw

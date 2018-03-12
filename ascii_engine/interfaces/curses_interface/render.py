@@ -1,10 +1,29 @@
 import curses
 from concurrent.futures import ThreadPoolExecutor
-from ascii_engine.action import Action
 from ascii_engine.screen import Screen
 
 
 class CursesRender:
+    def __init__(self):
+        self.window = _create_main_window()
+        self.render_interface = CursesRenderExecutor(self.window)
+        _configure_curses()
+
+    def render(self, screen):
+        self.render_interface.render(screen)
+
+    def create_empty_screen(self):
+        height, width = self.window.getmaxyx()
+        return Screen(width - 1, height)
+
+    def stop(self):
+        self.window.keypad(False)
+        curses.nocbreak()
+        curses.echo()
+        curses.endwin()
+
+
+class CursesRenderExecutor:
     def __init__(self, window):
         self.pairs = []
         self.window = window
@@ -55,55 +74,7 @@ def _configure_curses():
     curses.cbreak()
 
 
-def _create_keyboard_interface():
-    stdscr = curses.newwin(0, 0, 0, 0)
-    stdscr.keypad(True)
-    return stdscr
-
-
 def _create_main_window():
     window = curses.initscr()
     window.keypad(True)
     return window
-
-
-class CursesInterface:
-    def __init__(self):
-        self.window = _create_main_window()
-        self.render_interface = CursesRender(self.window)
-        _configure_curses()
-
-    def render(self, screen):
-        self.render_interface.render(screen)
-
-    def get_screen(self):
-        height, width = self.window.getmaxyx()
-        return Screen(width - 1, height)
-
-    def stop(self):
-        self.window.keypad(False)
-        curses.nocbreak()
-        curses.echo()
-        curses.endwin()
-
-
-class CursesKeyboardSubscription:
-    def __init__(self, loop):
-        self.interface = _create_keyboard_interface()
-        self.loop = loop
-
-    def listen_keyboard(self):
-        char = self.interface.get_wch()
-        if isinstance(char, str):
-            return ord(char)
-        return char
-
-    async def get_action(self):
-        keycode = await self.loop.run_in_executor(
-            None,
-            self.listen_keyboard
-        )
-        return Action('keypress', keycode)
-
-    def has_next(self):
-        return True

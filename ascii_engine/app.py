@@ -1,5 +1,5 @@
 import asyncio
-from ascii_engine.interfaces import CursesInterface
+from ascii_engine.interfaces.curses_interface.render import CursesRender
 
 
 class App:
@@ -15,7 +15,7 @@ class App:
         self._block_loop()
 
     def render_draw(self):
-        screen = self.interface.get_screen()
+        screen = self.interface.create_empty_screen()
         screen_to_render = self.draw(screen, self.model)
         self.interface.render(screen_to_render)
 
@@ -41,4 +41,4 @@ class App:
 
 
 def create_app(initial_model, draw, actor):
-    return App(CursesInterface(), initial_model, draw, actor)
+    return App(CursesRender(), initial_model, draw, actor)

@@ -14,7 +14,7 @@ DEFAULT_PAIR = 1
 
 async def wait_for_render(curses_interface, event_loop):
     await event_loop.run_in_executor(
-        curses_interface.render_interface.executor,
+        curses_interface.render_interface.pool,
         time.sleep,
         0
     )

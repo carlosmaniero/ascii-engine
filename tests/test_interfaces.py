@@ -57,8 +57,9 @@ def test_that_the_terminal_is_well_reconfigured_after_stop_call():
     assert mocked_curses.endwin.called
 
 
-@patch_curses
-def test_that_given_a_foreground_and_background_a_curses_pair_is_created():
+@pytest.mark.asyncio
+async def test_that_given_a_foreground_and_background_a_curses_pair_is_created(event_loop):
+    setup_curses()
     text_element = Text('ab\ncd')
     expected_fg = RGB(0, 0, 0)
     expected_bg = RGB(128, 0, 0)
@@ -72,6 +73,8 @@ def test_that_given_a_foreground_and_background_a_curses_pair_is_created():
 
     curses_interface = CursesInterface()
     curses_interface.render(screen)
+
+    await wait_for_render(curses_interface, event_loop)
 
     mocked_curses.init_pair.assert_called_once_with(
         expected_color_pair,

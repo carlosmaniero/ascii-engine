@@ -2,7 +2,7 @@ import pytest
 from ascii_engine.fragments.converter import StringLineToPixelFragment
 from ascii_engine.fragments.converter import MultiLineStringToPixelFragment
 from ascii_engine.pixel import Pixel
-from tests.elements.fragments.utils import fragment_to_list
+from tests.fragments.utils import fragment_to_list
 
 
 def test_that_line_fragment_renders_each_line_of_a_given_text():

@@ -2,7 +2,7 @@ import pytest
 from ascii_engine.fragments.block import BlockPixelLineFragment
 from ascii_engine.fragments.block import BlockPixelFragment
 from ascii_engine.pixel import Pixel
-from tests.elements.fragments.utils import fragment_to_list
+from tests.fragments.utils import fragment_to_list
 
 
 def test_that_block_line_fragment_renders_each_line_of_a_given_line():

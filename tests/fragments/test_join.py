@@ -1,7 +1,7 @@
 import pytest
 from ascii_engine.fragments.join import JoinMultiLineVerticallyFragment
 from ascii_engine.pixel import Pixel
-from tests.elements.fragments.utils import fragment_to_list
+from tests.fragments.utils import fragment_to_list
 
 
 def test_join_multi_line_fragments_vertically_put_each_above_other():

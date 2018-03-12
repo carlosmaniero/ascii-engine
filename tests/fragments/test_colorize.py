@@ -3,7 +3,7 @@ from ascii_engine.fragments.colorize import ColorizeLinePixelsFragment
 from ascii_engine.fragments.colorize import ColorizeMultiLinePixelsFragment
 from ascii_engine.colors import RGB
 from ascii_engine.pixel import Pixel
-from tests.elements.fragments.utils import fragment_to_list
+from tests.fragments.utils import fragment_to_list
 
 
 def test_that_colorized_line_pixels_set_the_foreground_of_a_given_line():

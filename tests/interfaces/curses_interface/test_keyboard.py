@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from interfaces.curses_interface.keyboard import CursesKeyboardSubscription
+from ascii_engine.interfaces.curses_interface.keyboard import CursesKeyboardSubscription
 from tests.mocked_modules.curses import setup_curses
 
 

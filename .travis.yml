@@ -7,6 +7,6 @@ install:
   - pip install -r requirements-dev.txt
 script:
   - pycodestyle ascii_engine/
-  - py.test --cov-report= --cov=ascii_engine
+  - py.test -vvv --cov-report= --cov=ascii_engine
 after_success:
   - coveralls

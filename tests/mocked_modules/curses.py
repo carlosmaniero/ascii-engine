@@ -13,6 +13,7 @@ sys.modules[curses_module_name] = mocked_curses
 def patch_curses(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
+        mocked_curses.newwin = Mock(name=curses_module_name + '.newwin')
         mocked_curses.initscr = Mock(name=curses_module_name + '.initscr')
         mocked_curses.start_color = Mock(name=curses_module_name + '.start_color')
         mocked_curses.echo = Mock(name=curses_module_name + '.echo')

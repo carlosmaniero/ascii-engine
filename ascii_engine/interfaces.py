@@ -1,41 +1,22 @@
 import curses
+from concurrent.futures import ThreadPoolExecutor
 from ascii_engine.action import Action
 from ascii_engine.screen import Screen
 
 
-class CursesInterface:
-    def __init__(self):
+class CursesRender:
+    def __init__(self, window):
         self.pairs = []
-        self.window = curses.initscr()
+        self.window = window
+        self.screen = None
+        self.executor = ThreadPoolExecutor(max_workers=1)
 
     def render(self, screen):
-        curses.start_color()
-        curses.noecho()
-        curses.cbreak()
-        self.window.keypad(True)
+        self.screen = screen
+        self.executor.submit(self._render_window)
 
-        self._render_window(screen.render())
-
-    def listen_keyboard(self):
-        char = self.window.get_wch()
-        if isinstance(char, str):
-            return ord(char)
-        return char
-
-    def get_subscriptions(self, loop):
-        return [CursesKeyboardSubscription(self, loop)]
-
-    def get_screen(self):
-        height, width = self.window.getmaxyx()
-        return Screen(width - 1, height)
-
-    def stop(self):
-        self.window.keypad(False)
-        curses.nocbreak()
-        curses.echo()
-        curses.endwin()
-
-    def _render_window(self, pixels):
+    def _render_window(self):
+        pixels = self.screen.render()
         window = self.window
         window.clear()
 
@@ -66,6 +47,54 @@ class CursesInterface:
             )
             self.pairs.append((term_fg, term_bg))
         return curses.color_pair(pair_index)
+
+
+def _configure_curses():
+    curses.start_color()
+    curses.noecho()
+    curses.cbreak()
+
+
+def _create_keyboard_interface():
+    stdscr = curses.newwin(0, 0, 0, 0)
+    stdscr.keypad(True)
+    return stdscr
+
+
+def _create_main_window():
+    window = curses.initscr()
+    window.keypad(True)
+    return window
+
+
+class CursesInterface:
+    def __init__(self):
+        self.window = _create_main_window()
+        self.keyboard_interface = _create_keyboard_interface()
+        self.render_interface = CursesRender(self.window)
+        _configure_curses()
+
+    def render(self, screen):
+        self.render_interface.render(screen)
+
+    def listen_keyboard(self):
+        char = self.keyboard_interface.get_wch()
+        if isinstance(char, str):
+            return ord(char)
+        return char
+
+    def get_subscriptions(self, loop):
+        return [CursesKeyboardSubscription(self, loop)]
+
+    def get_screen(self):
+        height, width = self.window.getmaxyx()
+        return Screen(width - 1, height)
+
+    def stop(self):
+        self.window.keypad(False)
+        curses.nocbreak()
+        curses.echo()
+        curses.endwin()
 
 
 class CursesKeyboardSubscription:

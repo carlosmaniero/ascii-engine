@@ -2,7 +2,8 @@ from ascii_engine.elements.text import Text
 from ascii_engine.app import create_app
 from ascii_engine.colors import RGB
 from ascii_engine.elements.layouts import VerticalLayout
-from ascii_engine.interfaces import CursesKeyboardSubscription
+from ascii_engine.interfaces.curses_interface.keyboard import CursesKeyboardSubscription
+from ascii_engine.interfaces.base.keyboard import KeypressAction
 
 
 def draw(screen, model):
@@ -14,7 +15,11 @@ def draw(screen, model):
     header = Text('Hello! Type anything:')
     layout.add(header)
 
-    if model.get('last_key') is not None:
+    if model.get('special_key', False):
+        text_element = Text('You pressed a special key')
+        text_element.set_background_color(RGB(200, 200, 45))
+        layout.add(text_element)
+    elif model.get('last_key') is not None:
         text_element = Text('You typed: ' + chr(model['last_key']))
         text_element.set_background_color(RGB(155, 200, 45))
         layout.add(text_element)
@@ -28,7 +33,8 @@ def draw(screen, model):
 
 
 def update(action, model):
-    if action.name == 'keypress':
+    if isinstance(action, KeypressAction):
+        model['special_key'] = action.is_special()
         model['last_key'] = action.value
         model['types'] += 1
     return model

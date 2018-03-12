@@ -1,12 +1,12 @@
 import signal
-from ascii_engine.interfaces import CursesInterface
+from ascii_engine.interfaces.curses_interface.render import CursesRender
 from ascii_engine.elements.text import Text
 from ascii_engine.elements.layouts import VerticalLayout
 from ascii_engine.colors import RGB
 
 
 if __name__ == '__main__':
-    curses_interface = CursesInterface()
+    curses_interface = CursesRender()
     screen = curses_interface.create_empty_screen()
 
     text_element = Text('Hello, World!')

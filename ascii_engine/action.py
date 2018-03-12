@@ -1,4 +1,4 @@
-from collections import namedtuple
-
-
-Action = namedtuple('Action', ['name', 'value'])
+class Action:
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value

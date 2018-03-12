@@ -12,7 +12,6 @@ class App:
 
     def start(self):
         self.render_draw()
-        self.register_subscriptions_from_interface()
         self._block_loop()
 
     def render_draw(self):
@@ -24,12 +23,11 @@ class App:
         subscription_coro = self._call_subscription(subscription)
         asyncio.ensure_future(subscription_coro, loop=self.loop)
 
-    def register_subscriptions_from_interface(self):
-        for subscription in self.interface.get_subscriptions(self.loop):
-            self.register_subscription(subscription)
-
     def stop(self):
         self.loop.stop()
+
+    def get_loop(self):
+        return self.loop
 
     async def _call_subscription(self, subscription):
         while subscription.has_next():

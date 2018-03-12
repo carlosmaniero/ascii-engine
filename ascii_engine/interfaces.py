@@ -31,10 +31,10 @@ class CursesRender:
         term_bg = 0
 
         if pixel.get_foreground_color():
-            term_fg = pixel.get_foreground_color().get_term_color()
+            term_fg = pixel.get_foreground_color().calculate_term_color()
 
         if pixel.get_background_color():
-            term_bg = pixel.get_background_color().get_term_color()
+            term_bg = pixel.get_background_color().calculate_term_color()
 
         try:
             pair_index = self.pairs.index((term_fg, term_bg)) + 1
@@ -70,21 +70,11 @@ def _create_main_window():
 class CursesInterface:
     def __init__(self):
         self.window = _create_main_window()
-        self.keyboard_interface = _create_keyboard_interface()
         self.render_interface = CursesRender(self.window)
         _configure_curses()
 
     def render(self, screen):
         self.render_interface.render(screen)
-
-    def listen_keyboard(self):
-        char = self.keyboard_interface.get_wch()
-        if isinstance(char, str):
-            return ord(char)
-        return char
-
-    def get_subscriptions(self, loop):
-        return [CursesKeyboardSubscription(self, loop)]
 
     def get_screen(self):
         height, width = self.window.getmaxyx()
@@ -98,14 +88,20 @@ class CursesInterface:
 
 
 class CursesKeyboardSubscription:
-    def __init__(self, interface, loop):
-        self.interface = interface
+    def __init__(self, loop):
+        self.interface = _create_keyboard_interface()
         self.loop = loop
+
+    def listen_keyboard(self):
+        char = self.interface.get_wch()
+        if isinstance(char, str):
+            return ord(char)
+        return char
 
     async def get_action(self):
         keycode = await self.loop.run_in_executor(
             None,
-            self.interface.listen_keyboard
+            self.listen_keyboard
         )
         return Action('keypress', keycode)
 

@@ -78,8 +78,8 @@ async def test_that_given_a_foreground_and_background_a_curses_pair_is_created(e
 
     mocked_curses.init_pair.assert_called_once_with(
         expected_color_pair,
-        expected_fg.get_term_color(),
-        expected_bg.get_term_color()
+        expected_fg.calculate_term_color(),
+        expected_bg.calculate_term_color()
     )
 
     curses_interface.window.addstr.assert_any_call(0, 0, 'a', 'color_1')
@@ -88,24 +88,25 @@ async def test_that_given_a_foreground_and_background_a_curses_pair_is_created(e
     curses_interface.window.addstr.assert_any_call(1, 1, 'd', 'color_1')
 
 
-@patch_curses
-def test_that_curses_interface_read_the_input_from_curses():
-    curses_interface = CursesInterface()
-    curses_interface.keyboard_interface.get_wch = Mock(return_value='a')
+@pytest.mark.asyncio
+async def test_that_curses_interface_read_the_input_from_curses(event_loop):
+    setup_curses()
+    keyboard = CursesKeyboardSubscription(event_loop)
+    keyboard.interface.get_wch = Mock(return_value='a')
 
-    keycode = curses_interface.listen_keyboard()
+    keycode = keyboard.listen_keyboard()
     assert keycode == ord('a')
-    assert curses_interface.keyboard_interface.get_wch.called is True
+    assert keyboard.interface.get_wch.called is True
 
 
-@patch_curses
-def test_that_curses_interface_read_the_input_from_curses_given_a_special_key():
-    curses_interface = CursesInterface()
-    curses_interface.keyboard_interface.get_wch = Mock(return_value=297)
+@pytest.mark.asyncio
+async def test_that_curses_interface_read_the_input_from_curses_given_a_special_key(event_loop):
+    keyboard = CursesKeyboardSubscription(event_loop)
+    keyboard.interface.get_wch = Mock(return_value=297)
 
-    keycode = curses_interface.listen_keyboard()
+    keycode = keyboard.listen_keyboard()
     assert keycode == 297
-    assert curses_interface.keyboard_interface.get_wch.called is True
+    assert keyboard.interface.get_wch.called is True
 
 
 def test_that_the_interface_returns_the_screen_with_terminal_size():
@@ -119,23 +120,15 @@ def test_that_the_interface_returns_the_screen_with_terminal_size():
 
 @pytest.mark.asyncio
 async def test_that_the_keyboard_subscription_get_the_keyboard_from_the_given_interface(event_loop):
-    interface = Mock()
-    interface.listen_keyboard = Mock(return_value=42)
-    subscription = CursesKeyboardSubscription(interface, event_loop)
+    subscription = CursesKeyboardSubscription(event_loop)
+    subscription.interface.get_wch = Mock(return_value=42)
     action = await subscription.get_action()
-    assert interface.listen_keyboard.called
+    assert subscription.interface.get_wch.called
     assert action.name == 'keypress'
     assert action.value == 42
 
 
-def test_that_the_keyboard_always_returns_that_has_next_item():
-    subscription = CursesKeyboardSubscription(Mock(), Mock())
+def test_that_the_keyboard_always_returns_that_has_next_item(event_loop):
+    subscription = CursesKeyboardSubscription(event_loop)
     assert subscription.has_next()
 
-
-@patch_curses
-def test_that_get_subscriptions_return_the_keyboard_well_configured(event_loop):
-    curses_interface = CursesInterface()
-    keyboard = curses_interface.get_subscriptions(event_loop)[0]
-    assert keyboard.interface == curses_interface
-    assert keyboard.loop == event_loop

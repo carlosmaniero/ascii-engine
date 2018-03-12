@@ -39,24 +39,6 @@ async def test_that_given_a_draw_function_it_is_called_with_the_given_initial_mo
     app.draw.assert_called_once_with(app.interface.get_screen.return_value, initial_model)
 
 
-@pytest.mark.asyncio
-async def test_that_it_register_all_interfaces_subscription(event_loop):
-    initial_model = 42
-    app = create_mock_app(initial_model, event_loop)
-    app.interface.get_subscriptions = Mock(return_value=[
-        Subscription(event_loop),
-        Subscription(event_loop),
-        Subscription(event_loop)
-    ])
-    await event_loop.run_in_executor(None, app.start)
-    await app.interface.get_subscriptions.return_value[2].future
-
-    assert app.interface.get_subscriptions.called
-    assert app.interface.get_subscriptions.return_value[0].calls == 0
-    assert app.interface.get_subscriptions.return_value[1].calls == 0
-    assert app.interface.get_subscriptions.return_value[2].calls == 0
-
-
 def test_that_when_the_app_render_is_called_it_call_the_draw_and_send_the_result_to_interface(event_loop):
     initial_model = 42
     screen = Screen(1, 2)
@@ -102,7 +84,7 @@ async def test_that_when_an_registered_action_is_called_until_has_no_next_action
     initial_model = 41
     app = create_mock_app(initial_model, event_loop)
 
-    # await event_loop.run_in_executor(None, app.start)
+    await event_loop.run_in_executor(None, app.start)
     app.start()
     app.render_draw = Mock()
     subscription = Subscription(event_loop)
@@ -133,3 +115,13 @@ def test_that_loop_start_app_helper_creates_an_app_with_curses_interface():
     assert app.actor == actor
     assert app.model == model
     assert app.draw == draw
+
+
+@patch_curses
+def test_that_app_returns_the_loop(event_loop):
+    app = create_mock_app(1, event_loop)
+    loop = Mock()
+    app.loop = loop
+    assert app.get_loop() == loop
+
+

@@ -2,13 +2,13 @@ from collections import namedtuple
 from ascii_engine.term_colors import TERM_COLOR_MAP
 
 
-cached_colors = {}
+cached_term_colors = {}
 
 
 class RGB(namedtuple('RGBBase', ['r', 'g', 'b'])):
-    def get_term_color(self):
-        if self in cached_colors:
-            return cached_colors[self]
+    def calculate_term_color(self):
+        if self._has_cache():
+            return self._get_cached()
 
         diff = 255 ** 3
         best_choice = 0
@@ -24,5 +24,11 @@ class RGB(namedtuple('RGBBase', ['r', 'g', 'b'])):
                 best_choice = term_color
                 diff = current_diff
 
-        cached_colors[self] = best_choice
+        cached_term_colors[self] = best_choice
         return best_choice
+
+    def _has_cache(self):
+        return self in cached_term_colors
+
+    def _get_cached(self):
+        return cached_term_colors[self]

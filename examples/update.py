@@ -2,6 +2,7 @@ from ascii_engine.elements.text import Text
 from ascii_engine.app import create_app
 from ascii_engine.colors import RGB
 from ascii_engine.elements.layouts import VerticalLayout
+from ascii_engine.interfaces import CursesKeyboardSubscription
 
 
 def draw(screen, model):
@@ -36,6 +37,7 @@ def update(action, model):
 app = create_app({'types': 0}, draw, update)
 
 try:
+    app.register_subscription(CursesKeyboardSubscription(app.get_loop()))
     app.start()
 except KeyboardInterrupt:
     app.stop()

@@ -1,3 +1,9 @@
+"""
+This module contains the map between the term color code and their rgb
+representation.
+"""
+
+
 TERM_COLOR_MAP = [
     # term color code - rgb
     (0, (0, 0, 0)),

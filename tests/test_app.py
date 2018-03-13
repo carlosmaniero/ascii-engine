@@ -11,7 +11,7 @@ class Subscription:
         self.calls = calls
         self.future = event_loop.create_future()
 
-    async def get_action(self):
+    async def listen(self):
         self.calls -= 1
         if self.calls == 0:
             self.future.set_result(True)
@@ -21,29 +21,29 @@ class Subscription:
         return self.calls != 0
 
 
-def create_mock_app(model, event_loop):
+def create_mock_app(state, event_loop):
     draw = Mock(return_value=Mock())
     actor = Mock()
     interface = Mock()
     interface.get_subscriptions = Mock(return_value=[])
-    app = App(interface, model, draw, actor)
+    app = App(interface, state, draw, actor)
     app.loop = event_loop
     return app
 
 
 @pytest.mark.asyncio
-async def test_that_given_a_draw_function_it_is_called_with_the_given_initial_model(event_loop):
-    initial_model = 42
-    app = create_mock_app(initial_model, event_loop)
+async def test_that_given_a_draw_function_it_is_called_with_the_given_initial_state(event_loop):
+    initial_state = 42
+    app = create_mock_app(initial_state, event_loop)
     await event_loop.run_in_executor(None, app.start)
-    app.draw.assert_called_once_with(app.interface.create_empty_screen.return_value, initial_model)
+    app.draw.assert_called_once_with(app.interface.create_empty_screen.return_value, initial_state)
 
 
 def test_that_when_the_app_render_is_called_it_call_the_draw_and_send_the_result_to_interface(event_loop):
-    initial_model = 42
+    initial_state = 42
     screen = Screen(1, 2)
-    app = create_mock_app(initial_model, event_loop)
-    app.model = 13
+    app = create_mock_app(initial_state, event_loop)
+    app.state = 13
     app.interface.create_empty_screen = Mock(return_value=screen)
     app.render_draw()
     app.draw.assert_called_with(screen, 13)
@@ -53,8 +53,8 @@ def test_that_when_the_app_render_is_called_it_call_the_draw_and_send_the_result
 
 @pytest.mark.asyncio
 async def test_that_the_when_app_starts_it_renders_the_draw(event_loop):
-    initial_model = 42
-    app = create_mock_app(initial_model, event_loop)
+    initial_state = 42
+    app = create_mock_app(initial_state, event_loop)
     app.render_draw = Mock()
     await event_loop.run_in_executor(None, app.start)
     assert app.render_draw.called
@@ -63,8 +63,8 @@ async def test_that_the_when_app_starts_it_renders_the_draw(event_loop):
 
 @pytest.mark.asyncio
 async def test_that_when_an_registered_action_returns_a_value_the_action_is_called_and_the_draw_is_rendered(event_loop):
-    initial_model = 41
-    app = create_mock_app(initial_model, event_loop)
+    initial_state = 41
+    app = create_mock_app(initial_state, event_loop)
 
     await event_loop.run_in_executor(None, app.start)
     app.render_draw = Mock()
@@ -73,16 +73,16 @@ async def test_that_when_an_registered_action_returns_a_value_the_action_is_call
     await subscription.future
 
     assert subscription.calls == 0
-    app.actor.assert_called_with(0, initial_model)
-    assert app.model == app.actor.return_value
+    app.actor.assert_called_with(0, initial_state)
+    assert app.state == app.actor.return_value
     assert app.render_draw.called
     app.stop()
 
 
 @pytest.mark.asyncio
 async def test_that_when_an_registered_action_is_called_until_has_no_next_action(event_loop):
-    initial_model = 41
-    app = create_mock_app(initial_model, event_loop)
+    initial_state = 41
+    app = create_mock_app(initial_state, event_loop)
 
     await event_loop.run_in_executor(None, app.start)
     app.start()
@@ -109,11 +109,11 @@ def test_that_loop_just_run_forever_when_it_is_not_started():
 def test_that_loop_start_app_helper_creates_an_app_with_curses_interface():
     draw = Mock()
     actor = Mock()
-    model = Mock()
-    app = create_app(model, draw, actor)
+    state = Mock()
+    app = create_app(state, draw, actor)
     assert isinstance(app.interface, CursesRender)
     assert app.actor == actor
-    assert app.model == model
+    assert app.state == state
     assert app.draw == draw
 
 

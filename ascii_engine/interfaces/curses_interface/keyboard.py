@@ -1,5 +1,5 @@
 import curses
-from ascii_engine.interfaces.base.keyboard import KeypressAction
+from ascii_engine.interfaces.base.keyboard import KeypressEvent
 
 
 def _create_keyboard_interface():
@@ -16,10 +16,10 @@ class CursesKeyboardSubscription:
     def listen_keyboard(self):
         char = self.interface.get_wch()
         if isinstance(char, str):
-            return KeypressAction(ord(char))
-        return KeypressAction(char, True)
+            return KeypressEvent(ord(char))
+        return KeypressEvent(char, True)
 
-    async def get_action(self):
+    async def listen(self):
         return await self.loop.run_in_executor(
             None,
             self.listen_keyboard

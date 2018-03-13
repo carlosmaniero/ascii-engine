@@ -1,8 +1,19 @@
+"""
+This module provide an easy way to colorize a pixel matrix.
+"""
+
 from ascii_engine.fragments.base import BaseFragment
 from ascii_engine.pixel import Pixel
 
 
-class ColorizeLinePixelsFragment(BaseFragment):
+class ColorizeLineFragment(BaseFragment):
+    """
+    It colorize a line fragment with the defined foreground and background (
+    both optional).
+
+    It never change the pixel foreground or background just set when it is
+    None.
+    """
     def __init__(self, line, foreground_color=None, background_color=None):
         self.__foreground_color = foreground_color
         self.__background_color = background_color
@@ -19,14 +30,21 @@ class ColorizeLinePixelsFragment(BaseFragment):
         )
 
 
-class ColorizeMultiLinePixelsFragment(BaseFragment):
+class ColorizeMatrixFragment(BaseFragment):
+    """
+    It colorize a matrix fragment with the defined foreground and background (
+    both optional).
+
+    It never change the pixel foreground or background just set when it is
+    None.
+    """
     def __init__(self, line, foreground_color=None, background_color=None):
         self.__foreground_color = foreground_color
         self.__background_color = background_color
         super().__init__(line)
 
     def _apply(self, line):
-        return ColorizeLinePixelsFragment(
+        return ColorizeLineFragment(
             line,
             self.__foreground_color,
             self.__background_color

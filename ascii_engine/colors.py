@@ -1,3 +1,8 @@
+"""
+This module contains the color system representation
+
+All colors is based in RGB
+"""
 from collections import namedtuple
 from ascii_engine.term_colors import TERM_COLOR_MAP
 
@@ -6,7 +11,16 @@ cached_term_colors = {}
 
 
 class RGB(namedtuple('RGBBase', ['r', 'g', 'b'])):
+    """
+    A RGB color.
+
+    Given a r, g, b it is able to find the closer term color.
+    """
+
     def calculate_term_color(self):
+        """
+        Calculate the closer term color.
+        """
         if self._has_cache():
             return self._get_cached()
 

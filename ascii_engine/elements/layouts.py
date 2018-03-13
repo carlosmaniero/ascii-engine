@@ -1,8 +1,8 @@
 from ascii_engine.elements.base import BaseElement
-from ascii_engine.fragments.block import BlockPixelFragment
-from ascii_engine.fragments.colorize import ColorizeMultiLinePixelsFragment
-from ascii_engine.fragments.join import JoinMultiLineVerticallyFragment
-from ascii_engine.fragments.colorize import ColorizeMultiLinePixelsFragment
+from ascii_engine.fragments.fixed import FixedMatrixFragment
+from ascii_engine.fragments.colorize import ColorizeMatrixFragment
+from ascii_engine.fragments.join import JoinVerticallyMatrixFragment
+from ascii_engine.fragments.colorize import ColorizeMatrixFragment
 
 
 class VerticalLayout(BaseElement):
@@ -14,10 +14,10 @@ class VerticalLayout(BaseElement):
         self.fragments.append(element.to_pixels())
 
     def to_pixels(self):
-        return ColorizeMultiLinePixelsFragment(
-            BlockPixelFragment(
-                JoinMultiLineVerticallyFragment(
-                    *self.fragments
+        return ColorizeMatrixFragment(
+            FixedMatrixFragment(
+                JoinVerticallyMatrixFragment(
+                    self.fragments
                 ),
                 self.get_width(),
                 self.get_height()

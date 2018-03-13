@@ -1,12 +1,33 @@
+"""
+This module provide fragments to help you to define a fixed size for fragments
+"""
 from ascii_engine.fragments.base import BaseFragment
-from ascii_engine.fragments.converter import StringLineToPixelFragment
+from ascii_engine.fragments.converter import StringToPixelLineFragment
 from ascii_engine.pixel import Pixel
 
 
-class BlockPixelLineFragment(BaseFragment):
-    def __init__(self, line_fragment, width):
+class FixedLineFragment(BaseFragment):
+    """
+    This fragment receive a line and block the line with the given width.
+
+    Examples:
+
+    >>> given_fragment = [Pixel('a'), Pixel('b')]
+    >>> expected_fragment = given_fragment + [Pixel(' ')]
+    >>> list(FixedLineFragment(given_fragment), 3) == expected_fragment
+    ... True
+
+    When the fragment is larger then the width its truncated.
+
+    >>> given_fragment = [Pixel('a'), Pixel('b')]
+    >>> expected_fragment = [Pixel('a')]
+    >>> list(FixedLineFragment(given_fragment), 1) == expected_fragment
+    ... True
+    """
+
+    def __init__(self, fragment, width):
         self.__width = width
-        super().__init__(line_fragment[:self.__width])
+        super().__init__(fragment[:self.__width])
 
     def __iter__(self):
         yield from super().__iter__()
@@ -16,7 +37,7 @@ class BlockPixelLineFragment(BaseFragment):
         if len(self._get_fragment()) < self.__width:
             total_of_blank_chars = self.__width - len(self._get_fragment())
             fill_with = ' ' * total_of_blank_chars
-            for pixel in StringLineToPixelFragment(fill_with):
+            for pixel in StringToPixelLineFragment(fill_with):
                 yield pixel
 
     def _apply(self, pixel):
@@ -35,7 +56,18 @@ class BlockPixelLineFragment(BaseFragment):
         raise IndexError
 
 
-class BlockPixelFragment(BaseFragment):
+class FixedMatrixFragment(BaseFragment):
+    """
+    This fragment receive a multi line and block the line with the given
+    width and height.
+
+    When the width is not defined it assumes the width of the largest line.
+
+    When the height is not defined it assumes the fragment length.
+
+    If the width or height is less than the fragment size, it truncates the
+    fragment.
+    """
     def __init__(self, lines_fragment, width=None, height=None):
         self.width = width
         self.height = height
@@ -62,10 +94,10 @@ class BlockPixelFragment(BaseFragment):
     def __complete_lines(self):
         if len(self._get_fragment()) < self.height:
             for _ in range(self.height - len(self._get_fragment())):
-                yield BlockPixelLineFragment([], self.width)
+                yield FixedLineFragment([], self.width)
 
     def _apply(self, line):
-        return BlockPixelLineFragment(line, self.width)
+        return FixedLineFragment(line, self.width)
 
     def __len__(self):
         return self.height

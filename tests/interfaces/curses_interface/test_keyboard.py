@@ -3,6 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from ascii_engine.interfaces.curses_interface.keyboard import CursesKeyboardSubscription
+from ascii_engine.interfaces.base.keyboard import KeypressEvent
 from tests.mocked_modules.curses import setup_curses
 
 
@@ -31,9 +32,9 @@ async def test_that_curses_interface_read_the_input_from_curses_given_a_special_
 async def test_that_the_keyboard_subscription_return_an_action_given_a_char(event_loop):
     subscription = CursesKeyboardSubscription(event_loop)
     subscription.interface.get_wch = Mock(return_value='a')
-    action = await subscription.get_action()
+    action = await subscription.listen()
     assert subscription.interface.get_wch.called
-    assert action.name == 'keypress'
+    assert type(action) == KeypressEvent
     assert action.value == ord('a')
     assert not action.is_special()
 
@@ -42,9 +43,9 @@ async def test_that_the_keyboard_subscription_return_an_action_given_a_char(even
 async def test_that_the_keyboard_subscription_return_an_action_given_a_special_key(event_loop):
     subscription = CursesKeyboardSubscription(event_loop)
     subscription.interface.get_wch = Mock(return_value=260)
-    action = await subscription.get_action()
+    action = await subscription.listen()
     assert subscription.interface.get_wch.called
-    assert action.name == 'keypress'
+    assert type(action) == KeypressEvent
     assert action.value == 260
     assert action.is_special()
 

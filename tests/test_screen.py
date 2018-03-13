@@ -1,6 +1,6 @@
 from ascii_engine.screen import Screen
 from ascii_engine.pixel import BLANK_PIXEL
-from ascii_engine.coords import Coords
+from ascii_engine.coord import Coord
 from ascii_engine.elements.text import Text
 from tests.asserts import assertPixelsAreEquals
 
@@ -43,11 +43,11 @@ def test_that_screen_render_elements_given_an_possition():
     text_element1 = Text('Hello')
     text_element2 = Text('Bye')
     screen.add_element(text_element1)
-    screen.add_element(text_element2, coords=Coords(0, 1))
+    screen.add_element(text_element2, coord=Coord(0, 1))
     assertPixelsAreEquals(screen.render(), Text('Hello\nBye  ').to_pixels())
 
 
 def test_that_screen_pixels_out_of_screen():
     screen = Screen(5, 1)
-    screen.add_element(Text('Hello'), Coords(1, 0))
+    screen.add_element(Text('Hello'), Coord(1, 0))
     assertPixelsAreEquals(screen.render(), Text(' Hell').to_pixels())

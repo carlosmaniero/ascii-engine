@@ -1,5 +1,5 @@
-from ascii_engine.fragments.converter import MultiLineStringToPixelFragment
-from ascii_engine.fragments.colorize import ColorizeMultiLinePixelsFragment
+from ascii_engine.fragments.converter import StringToPixelMatrixFragment
+from ascii_engine.fragments.colorize import ColorizeMatrixFragment
 from ascii_engine.elements.base import BaseElement
 
 
@@ -11,8 +11,8 @@ class Text(BaseElement):
         super().__init__(width, height)
 
     def to_pixels(self):
-        return ColorizeMultiLinePixelsFragment(
-            MultiLineStringToPixelFragment(
+        return ColorizeMatrixFragment(
+            StringToPixelMatrixFragment(
                 self.lines
             ),
             self.foreground_color,

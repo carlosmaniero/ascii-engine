@@ -49,7 +49,7 @@ class BaseFragment:
         Apply receive the small part of the given fragment (an element) and
         change its characteristics.
         """
-        raise element_part
+        return element_part
 
     def _get_fragment(self):
         """

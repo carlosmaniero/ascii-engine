@@ -20,23 +20,36 @@ class BaseFragment:
     hashable, it not necessarily should be a fragment object. You can see a
     example where the given fragment isn't a fragment object in the
     converter module.
+
+    You can define the fragment size by passing the size argument in the
+    constructor if it is not given, the BaseFragment will use the fragment
+    length.
+
+    Remember that, if the given size is larger than the fragment size, you
+    should implement the _get_index by yourself because it by default always
+    get the element by index from the fragment.
     """
-    def __init__(self, fragment):
+    def __init__(self, fragment, size=None):
         self.__fragment = fragment
+
+        if size:
+            self.__size = size
+        else:
+            self.__size = len(fragment)
 
     def __iter__(self):
         """
         Iterate over the given fragment by calling the self._apply
         """
-        for fragment_part in self._get_fragment():
-            yield self._apply(fragment_part)
+        for index in range(len(self)):
+            yield self._get_index(index)
 
     def _apply(self, element_part):
         """
         Apply receive the small part of the given fragment (an element) and
         change its characteristics.
         """
-        raise NotImplementedError
+        raise element_part
 
     def _get_fragment(self):
         """
@@ -82,7 +95,7 @@ class BaseFragment:
         """
         Delegates to the fragment length.
         """
-        return len(self._get_fragment())
+        return self.__size
 
 
 class SliceIterableFragment(BaseFragment):
@@ -90,6 +103,9 @@ class SliceIterableFragment(BaseFragment):
     This provide a lazy way to slice a fragment.
 
     Like the slice function it receives a start, a stop and a step.
+
+    By default, all fragments returns a SliceIterableFragment instance when
+    the fragment is sliced.
     """
     def __init__(self, fragment, start, stop, step):
         self.__start = start
@@ -117,10 +133,6 @@ class SliceIterableFragment(BaseFragment):
     def _get_index(self, index):
         slice_index = self._get_range()[index]
         return self._get_fragment()[slice_index]
-
-    def __iter__(self):
-        for index in self._get_range():
-            yield self._get_fragment()[index]
 
     def __len__(self):
         return len(self._get_range())

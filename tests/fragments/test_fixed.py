@@ -21,7 +21,7 @@ def test_that_fixed_line_fragment_renders_each_line_of_a_given_line():
     assert iterations == len(expected_text)
 
 
-def test_that_given_an_larger_line_the_fixed_line_trucate_it():
+def test_that_given_an_larger_line_the_fixed_line_truncates_it():
     given_text = "Hello, World!"
     given_fragment = [Pixel(char) for char in given_text]
 

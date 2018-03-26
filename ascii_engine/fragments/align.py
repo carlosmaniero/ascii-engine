@@ -6,15 +6,23 @@ class AlignRightLineFragment(BaseFragment):
     """
     Align center a line.
 
+    >>> given_fragment = [Pixel('a'), Pixel('b')]
+    >>> expected_fragment = [Pixel(' '), Pixel(' '), Pixel('a'), Pixel('b')]
+    >>> list(AlignRightLineFragment(given_fragment), 4) == expected_fragment
+    ... True
+
     If the given width is lower than the fragment it keep align left.
+
+    >>> given_fragment = [Pixel('a'), Pixel('b')]
+    >>> list(AlignRightLineFragment(given_fragment), 1) == [Pixel('a')]
+    ... True
     """
     def __init__(self, fragment, width):
-        super().__init__(fragment)
-        self.__width = width
-        self.__start_pixel = max(self.__width - len(self._get_fragment()), 0)
+        super().__init__(fragment, width)
+        self.__start_pixel = max(width - len(self._get_fragment()), 0)
 
     def __iter__(self):
-        for index in range(self.__width):
+        for index in range(len(self)):
             yield self._get_index(index)
 
     def _get_index(self, index):
@@ -23,19 +31,24 @@ class AlignRightLineFragment(BaseFragment):
         else:
             return self._get_fragment()[index - self.__start_pixel]
 
-    def __len__(self):
-        return self.__width
-
 
 class AlignCenterLineFragment(BaseFragment):
     """
     Align center a line.
 
+    >>> given_fragment = [Pixel('a'), Pixel('b')]
+    >>> expected_fragment = [Pixel(' '), Pixel('a'), Pixel('b'), Pixel(' ')]
+    >>> list(AlignCenterLineFragment(given_fragment), 4) == expected_fragment
+    ... True
+
     If the given width is lower than the fragment it keep align left.
+
+    >>> given_fragment = [Pixel('a'), Pixel('b')]
+    >>> list(AlignCenterLineFragment(given_fragment), 1) == [Pixel('a')]
+    ... True
     """
     def __init__(self, fragment, width):
-        super().__init__(fragment)
-        self.__width = width
+        super().__init__(fragment, width)
         self.__start_pixel = (width - len(fragment)) // 2
         self.__end_pixel = self.__start_pixel + len(fragment) - 1
 
@@ -44,7 +57,7 @@ class AlignCenterLineFragment(BaseFragment):
             self.__end_pixel = width
 
     def __iter__(self):
-        for index in range(self.__width):
+        for index in range(len(self)):
             yield self._get_index(index)
 
     def _get_index(self, index):
@@ -54,6 +67,3 @@ class AlignCenterLineFragment(BaseFragment):
             return Pixel(' ')
         else:
             return self._get_fragment()[index - self.__start_pixel]
-
-    def __len__(self):
-        return self.__width

@@ -3,6 +3,7 @@ This module provide ways to join fragments.
 """
 
 from ascii_engine.fragments.base import BaseFragment
+from ascii_engine.fragments.utils import calculate_fragments_length_sum
 
 
 class JoinVerticallyMatrixFragment(BaseFragment):
@@ -28,7 +29,8 @@ class JoinVerticallyMatrixFragment(BaseFragment):
     >>> ]
     """
     def __init__(self, fragments):
-        super().__init__(fragments)
+        length = calculate_fragments_length_sum(fragments)
+        super().__init__(fragments, length)
 
     def __iter__(self):
         for fragment in self._get_fragment():
@@ -36,13 +38,10 @@ class JoinVerticallyMatrixFragment(BaseFragment):
                 yield line
 
     def _get_index(self, index):
-        current_lenght = 0
+        current_length = 0
         for fragment in self._get_fragment():
-            if current_lenght + len(fragment) > index:
-                return fragment[index - current_lenght]
-            current_lenght += len(fragment)
+            if current_length + len(fragment) > index:
+                return fragment[index - current_length]
+            current_length += len(fragment)
 
         raise IndexError
-
-    def __len__(self):
-        return sum(map(len, self._get_fragment()))

@@ -1,3 +1,7 @@
+"""
+This module provides an easy way to align fragments on screen.
+"""
+
 from ascii_engine.fragments.base import BaseFragment
 from ascii_engine.pixel import Pixel
 
@@ -30,6 +34,18 @@ class AlignRightLineFragment(BaseFragment):
             return Pixel(' ')
         else:
             return self._get_fragment()[index - self.__start_pixel]
+
+
+class AlignMatrixRightLineFragment(BaseFragment):
+    """
+    Given a Matrix Fragment it will put each line of the matrix to the right
+    """
+    def __init__(self, fragment, width):
+        self.__width = width
+        super().__init__(fragment)
+
+    def _apply(self, element_part):
+        return AlignRightLineFragment(element_part, self.__width)
 
 
 class AlignCenterLineFragment(BaseFragment):

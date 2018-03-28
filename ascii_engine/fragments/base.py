@@ -70,6 +70,13 @@ class BaseFragment:
             given_slice.step
         )
 
+    def _normalize_index(self, index):
+        if abs(index) >= len(self):
+            raise IndexError
+        if index < 0:
+            return len(self) + index
+        return index
+
     def _get_index(self, index):
         """
         When an integer is given for the __getitem__ it calls this method
@@ -83,11 +90,16 @@ class BaseFragment:
         By default it check the item type and calls the _get_slice or
         _get_index depending if the item isn't a slice or integer it raises
         IndexError.
+
+        I don't need to deal with negative indexes it always normalizes and
+        convert to a positive one.
         """
         if isinstance(item, slice):
             return self._get_slice(item)
         elif isinstance(item, int):
-            return self._get_index(item)
+            return self._get_index(
+                self._normalize_index(item)
+            )
 
         raise IndexError
 
@@ -114,25 +126,62 @@ class SliceIterableFragment(BaseFragment):
         super().__init__(fragment)
 
     def _calculate_stop(self):
+        """
+        When the step receives a negative number and there is no stop value
+        set, it assumes that the stop is -1. Where is possible to
+        """
+        if self.__stop is None and self._calculate_step() < 0:
+            return -1
+
         stop = self.__stop or len(self._get_fragment())
         return min(len(self._get_fragment()), stop)
 
     def _calculate_start(self):
+        if self._calculate_step() < 0 and self.__start is None:
+            return len(self._get_fragment()) - 1
+
+        if self._calculate_step() < 0 and self.__start < 0:
+            return len(self._get_fragment()) + self.__start
+
         return self.__start or 0
 
     def _calculate_step(self):
         return self.__step or 1
 
     def _get_range(self):
+        if self._empty_slice_python_compliance():
+            return []
+
         return range(
             self._calculate_start(),
             self._calculate_stop(),
             self._calculate_step()
         )
 
+    def _empty_slice_python_compliance(self):
+        """
+        I don't know why but python return a zero length list given a
+        negative steps.
+
+        By example:
+
+        >>> 'Python'[::-1]
+        ... 'nohtyP'
+        >>> 'Python'[:0:-1]
+        ... 'nohty'
+        >>> 'Python'[:-1:-1]
+        ... ''
+        """
+
+        if self.__step is not None and self.__stop is not None:
+            return self.__step < 0 and self.__stop < 0
+
+        return False
+
     def _get_index(self, index):
         slice_index = self._get_range()[index]
         return self._get_fragment()[slice_index]
 
     def __len__(self):
+        print(self._get_range())
         return len(self._get_range())

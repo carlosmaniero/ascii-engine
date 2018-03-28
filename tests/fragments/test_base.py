@@ -3,7 +3,8 @@ from collections import namedtuple
 import pytest
 
 from ascii_engine.colors import RGB
-from ascii_engine.fragments.align import AlignCenterLineFragment
+from ascii_engine.fragments.align import AlignCenterLineFragment, \
+    AlignRightLineFragment, AlignMatrixRightLineFragment
 from ascii_engine.fragments.colorize import ColorizeMatrixFragment
 from ascii_engine.pixel import Pixel
 from tests.fragments.utils import fragment_to_list
@@ -32,10 +33,23 @@ given_matrix_fragment = [
     ]
 ]
 
+
 tests_data = [
     ParameterTestData(
-        AlignCenterLineFragment(given_line_fragment, 10),
-        [Pixel(' ')] * 2 + given_line_fragment + [Pixel(' ')] * 3
+        AlignCenterLineFragment(given_line_fragment, 11),
+        [Pixel(' ')] * 3 + given_line_fragment + [Pixel(' ')] * 3
+    ),
+    ParameterTestData(
+        AlignRightLineFragment(given_line_fragment, 10),
+        [Pixel(' ')] * 5 + given_line_fragment
+    ),
+    ParameterTestData(
+        AlignMatrixRightLineFragment(given_matrix_fragment, 10),
+        [
+            [Pixel(' ')] * 5 + given_matrix_fragment[0],
+            [Pixel(' ')] * 7 + given_matrix_fragment[1],
+            [Pixel(' ')] * 7 + given_matrix_fragment[2],
+        ]
     ),
     ParameterTestData(
         ColorizeMatrixFragment(

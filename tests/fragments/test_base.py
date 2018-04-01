@@ -7,6 +7,8 @@ from ascii_engine.fragments.align import AlignCenterLineFragment, \
     AlignRightLineFragment, AlignMatrixRightLineFragment
 from ascii_engine.fragments.colorize import ColorizeMatrixFragment, \
     ColorizeLineFragment
+from ascii_engine.fragments.converter import StringToPixelLineFragment, \
+    StringToPixelMatrixFragment
 from ascii_engine.pixel import Pixel
 from tests.fragments.utils import fragment_to_list
 
@@ -88,7 +90,19 @@ tests_data = [
                 Pixel('.', RGB(3, 2, 1), RGB(1, 2, 3)),
             ]
         ]
-    )
+    ),
+    ParameterTestData(
+        StringToPixelLineFragment(given_text),
+        given_line_fragment
+    ),
+    ParameterTestData(
+        StringToPixelMatrixFragment([
+            "Hello",
+            "Bye",
+            "..."
+        ]),
+        given_matrix_fragment
+    ),
 ]
 
 @pytest.mark.parametrize('test_data', tests_data)

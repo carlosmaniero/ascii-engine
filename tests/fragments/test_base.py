@@ -164,6 +164,9 @@ def test_fragment_is_sliceable(test_data):
         test_data.fragment[:-1:-1]) == test_data.expected[:-1:-1]
 
     assert fragment_to_list(
+        test_data.fragment[:-half:-1]) == test_data.expected[:-half:-1]
+
+    assert fragment_to_list(
         test_data.fragment[-2::-1]) == test_data.expected[-2::-1]
 
     assert fragment_to_list(

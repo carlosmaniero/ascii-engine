@@ -29,6 +29,7 @@ class BaseFragment:
     should implement the _get_index by yourself because it by default always
     get the element by index from the fragment.
     """
+
     def __init__(self, fragment, size=None):
         self.__fragment = fragment
 
@@ -119,69 +120,55 @@ class SliceIterableFragment(BaseFragment):
     By default, all fragments returns a SliceIterableFragment instance when
     the fragment is sliced.
     """
+
     def __init__(self, fragment, start, stop, step):
         self.__start = start
         self.__stop = stop
         self.__step = step
         super().__init__(fragment)
 
+    def _is_reverse(self):
+        """
+        Check if it's a reverse slice
+        """
+        return self.__step is not None and self.__step < 1
+
+    def _calculate_start(self):
+        if self._is_reverse():
+            if self.__start is None:
+                if self.__stop is not None and self._calculate_stop() < 0:
+                    return -1
+                return len(self._get_fragment()) - 1
+
+            if self.__start < 0:
+                return len(self._get_fragment()) + self.__start
+
+        return self.__start or 0
+
     def _calculate_stop(self):
         """
         When the step receives a negative number and there is no stop value
         set, it assumes that the stop is -1. Where is possible to
         """
-        if self.__stop is None and self._calculate_step() < 0:
+        if self.__stop is None and self._is_reverse():
             return -1
 
         stop = self.__stop or len(self._get_fragment())
         return min(len(self._get_fragment()), stop)
 
-    def _calculate_start(self):
-        if self._calculate_step() < 0 and self.__start is None:
-            return len(self._get_fragment()) - 1
-
-        if self._calculate_step() < 0 and self.__start < 0:
-            return len(self._get_fragment()) + self.__start
-
-        return self.__start or 0
-
     def _calculate_step(self):
         return self.__step or 1
 
     def _get_range(self):
-        if self._empty_slice_python_compliance():
-            return []
-
         return range(
             self._calculate_start(),
             self._calculate_stop(),
             self._calculate_step()
         )
 
-    def _empty_slice_python_compliance(self):
-        """
-        I don't know why but python return a zero length list given a
-        negative steps.
-
-        By example:
-
-        >>> 'Python'[::-1]
-        ... 'nohtyP'
-        >>> 'Python'[:0:-1]
-        ... 'nohty'
-        >>> 'Python'[:-1:-1]
-        ... ''
-        """
-
-        if self.__step is not None and self.__stop is not None:
-            return self.__step < 0 and self.__stop < 0
-
-        return False
-
     def _get_index(self, index):
         slice_index = self._get_range()[index]
         return self._get_fragment()[slice_index]
 
     def __len__(self):
-        print(self._get_range())
         return len(self._get_range())

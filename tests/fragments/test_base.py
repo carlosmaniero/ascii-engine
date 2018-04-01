@@ -5,18 +5,17 @@ import pytest
 from ascii_engine.colors import RGB
 from ascii_engine.fragments.align import AlignCenterLineFragment, \
     AlignRightLineFragment, AlignMatrixRightLineFragment
-from ascii_engine.fragments.colorize import ColorizeMatrixFragment
+from ascii_engine.fragments.colorize import ColorizeMatrixFragment, \
+    ColorizeLineFragment
 from ascii_engine.pixel import Pixel
 from tests.fragments.utils import fragment_to_list
 
 ParameterTestData = namedtuple('ParameterTestData', ['fragment', 'expected'])
 
+given_text = 'Hello'
+
 given_line_fragment = [
-    Pixel('H'),
-    Pixel('e'),
-    Pixel('l'),
-    Pixel('l'),
-    Pixel('o'),
+    Pixel(char) for char in given_text
 ]
 
 given_matrix_fragment = [
@@ -49,6 +48,19 @@ tests_data = [
             [Pixel(' ')] * 5 + given_matrix_fragment[0],
             [Pixel(' ')] * 7 + given_matrix_fragment[1],
             [Pixel(' ')] * 7 + given_matrix_fragment[2],
+        ]
+    ),
+    ParameterTestData(
+        ColorizeLineFragment(
+            given_line_fragment,
+            foreground_color=RGB(3, 2, 1),
+            background_color=RGB(1, 2, 3)),
+        [
+            Pixel('H', RGB(3, 2, 1), RGB(1, 2, 3)),
+            Pixel('e', RGB(3, 2, 1), RGB(1, 2, 3)),
+            Pixel('l', RGB(3, 2, 1), RGB(1, 2, 3)),
+            Pixel('l', RGB(3, 2, 1), RGB(1, 2, 3)),
+            Pixel('o', RGB(3, 2, 1), RGB(1, 2, 3)),
         ]
     ),
     ParameterTestData(

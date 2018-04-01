@@ -12,10 +12,15 @@ def test_that_colorized_line_pixels_set_the_foreground_of_a_given_line():
     given_color = RGB(1, 2, 3)
     given_line_pixels = [Pixel(char) for char in text]
 
-    fragment = ColorizeLineFragment(given_line_pixels, foreground_color=given_color)
+    fragment = ColorizeLineFragment(
+        given_line_pixels,
+        foreground_color=given_color
+    )
 
-    expected_line_pixels = [Pixel(char, foreground_color=given_color) for char in text]
-    assert list(fragment) == expected_line_pixels
+    expected_line_pixels = [
+        Pixel(char, foreground_color=given_color) for char in text
+    ]
+    assert fragment_to_list(fragment) == expected_line_pixels
 
 
 def test_that_colorized_line_pixels_set_the_background_of_a_given_line():
@@ -24,123 +29,57 @@ def test_that_colorized_line_pixels_set_the_background_of_a_given_line():
     given_color = RGB(1, 2, 3)
     given_line_pixels = [Pixel(char) for char in text]
 
-    fragment = ColorizeLineFragment(given_line_pixels, background_color=given_color)
-
-    expected_line_pixels = [Pixel(char, background_color=given_color) for char in text]
-    assert list(fragment) == expected_line_pixels
-
-
-def test_that_colorized_line_pixels_set_the_foreground_and_background_of_a_given_line():
-    text = "Hello, World"
-
-    given_foreground_color = RGB(3, 2, 1)
-    given_background_color = RGB(1, 2, 3)
-    given_line_pixels = [Pixel(char) for char in text]
-
     fragment = ColorizeLineFragment(
         given_line_pixels,
-        foreground_color=given_foreground_color,
-        background_color=given_background_color
+        background_color=given_color
     )
 
     expected_line_pixels = [
         Pixel(
             char=char,
-            foreground_color=given_foreground_color,
-            background_color=given_background_color
+            background_color=given_color
         ) for char in text
     ]
-    assert list(fragment) == expected_line_pixels
+
+    assert fragment_to_list(fragment) == expected_line_pixels
 
 
-def test_that_colorized_line_pixels_accepts_slices():
-    text = "Hello, World"
-
-    given_foreground_color = RGB(3, 2, 1)
+def test_that_colorized_line_pixels_does_not_replace_pixels_background_color():
     given_background_color = RGB(1, 2, 3)
-    given_line_pixels = [Pixel(char) for char in text]
-
-    fragment = ColorizeLineFragment(
-        given_line_pixels,
-        foreground_color=given_foreground_color,
-        background_color=given_background_color
-    )
-
-    expected_line_pixels = [
+    given_colorized_line = [
         Pixel(
-            char=char,
-            foreground_color=given_foreground_color,
+            char=str(i),
             background_color=given_background_color
-        ) for char in text
-    ]
-    assert list(fragment[1:]) == expected_line_pixels[1:]
-    assert list(fragment[:2]) == expected_line_pixels[:2]
-    assert list(fragment[::2]) == expected_line_pixels[::2]
-
-
-def test_that_colorized_line_pixels_colorize_just_empty_pixels():
-    given_background_color = RGB(1, 2, 3)
-    line = [
-        Pixel(
-            str(i), background_color=given_background_color
         ) for i in range(3)
-    ] + [Pixel(str(i)) for i in range(3)]
+    ]
+
+    given_non_color_line = [Pixel(str(i)) for i in range(3)]
+    given_line = given_colorized_line + given_non_color_line
 
     expected_background_color = RGB(3, 2, 1)
-    expected_line = [
+    expected_line = given_colorized_line + [
         Pixel(
-            str(i), background_color=given_background_color
-        )
-        for i in range(3)
-    ] + [
-        Pixel(
-            str(i), background_color=expected_background_color
-        ) for i in range(3)
+            pixel.get_char(), background_color=expected_background_color
+        ) for pixel in given_colorized_line
     ]
-
-    assert list(ColorizeLineFragment(
-        line,
-        background_color=expected_background_color
-    )) == expected_line
-
-
-def test_that_colorized_line_pixels_accepts_indexing():
-    text = "Hello, World"
-
-    given_foreground_color = RGB(3, 2, 1)
-    given_background_color = RGB(1, 2, 3)
-    given_line_pixels = [Pixel(char) for char in text]
 
     fragment = ColorizeLineFragment(
-        given_line_pixels,
-        foreground_color=given_foreground_color,
-        background_color=given_background_color
+        given_line,
+        background_color=expected_background_color
     )
-
-    expected_line_pixels = [
-        Pixel(
-            char=char,
-            foreground_color=given_foreground_color,
-            background_color=given_background_color
-        ) for char in text
-    ]
-    assert fragment[1] == expected_line_pixels[1]
-    assert fragment[-1] == expected_line_pixels[-1]
-
-    with pytest.raises(IndexError):
-        fragment[len(text)]
-
-    with pytest.raises(IndexError):
-        fragment["anything-that-is-invalid"]
+    assert fragment_to_list(fragment) == expected_line
 
 
 def test_that_colorized_line_just_colorize_non_colorized_pixels():
     given_foreground_color = RGB(3, 2, 1)
     given_background_color = RGB(1, 2, 3)
 
+    given_start_fg = RGB(0, 0, 0)
+    given_start_bg = RGB(1, 1, 1)
+
     given_line_pixels = [
         Pixel('B'),
-        Pixel('y', foreground_color=RGB(0, 0, 0), background_color=RGB(1, 1, 1)),
+        Pixel('y', given_start_fg, given_start_bg),
         Pixel('e')
     ]
 
@@ -158,8 +97,8 @@ def test_that_colorized_line_just_colorize_non_colorized_pixels():
         ),
         Pixel(
             char='y',
-            foreground_color=RGB(0, 0, 0),
-            background_color=RGB(1, 1, 1)
+            foreground_color=given_start_fg,
+            background_color=given_start_bg
         ),
         Pixel(
             char='e',
@@ -168,130 +107,3 @@ def test_that_colorized_line_just_colorize_non_colorized_pixels():
         )
     ]
     assert list(fragment) == expected_line_pixels
-
-
-def test_that_colorized_line_has_the_length_equals_the_given_line():
-    assert len(ColorizeLineFragment([])) == 0
-    assert len(ColorizeLineFragment([Pixel('a'), Pixel('b')])) == 2
-
-
-def test_that_colorized_multi_line_pixels_set_the_foreground_and_background_of_a_given_line():
-    text1 = "Hello"
-    text2 = "World"
-
-    given_foreground_color = RGB(3, 2, 1)
-    given_background_color = RGB(1, 2, 3)
-    given_line_pixels = [
-        [Pixel(char) for char in text1],
-        [Pixel(char) for char in text2],
-    ]
-
-    fragment = ColorizeMatrixFragment(
-        given_line_pixels,
-        foreground_color=given_foreground_color,
-        background_color=given_background_color
-    )
-
-    expected_line_pixels = [
-        [
-            Pixel(
-                char=char,
-                foreground_color=given_foreground_color,
-                background_color=given_background_color
-            ) for char in text1
-        ],
-        [
-            Pixel(
-                char=char,
-                foreground_color=given_foreground_color,
-                background_color=given_background_color
-            ) for char in text2
-        ],
-    ]
-    assert fragment_to_list(fragment) == expected_line_pixels
-
-
-def test_that_colorized_multi_line_pixels_supportes_slices():
-    text1 = "Hello"
-    text2 = "World"
-
-    given_foreground_color = RGB(3, 2, 1)
-    given_background_color = RGB(1, 2, 3)
-    given_line_pixels = [
-        [Pixel(char) for char in text1],
-        [Pixel(char) for char in text2],
-    ]
-
-    fragment = ColorizeMatrixFragment(
-        given_line_pixels,
-        foreground_color=given_foreground_color,
-        background_color=given_background_color
-    )
-
-    expected_line_pixels = [
-        [
-            Pixel(
-                char=char,
-                foreground_color=given_foreground_color,
-                background_color=given_background_color
-            ) for char in text1
-        ],
-        [
-            Pixel(
-                char=char,
-                foreground_color=given_foreground_color,
-                background_color=given_background_color
-            ) for char in text2
-        ],
-    ]
-    assert fragment_to_list(fragment[1:]) == expected_line_pixels[1:]
-    assert fragment_to_list(fragment[:2]) == expected_line_pixels[:2]
-    assert fragment_to_list(fragment[::2]) == expected_line_pixels[::2]
-
-
-def test_that_colorized_multi_line_pixels_supportes_indexing():
-    text1 = "Hello"
-    text2 = "World"
-
-    given_foreground_color = RGB(3, 2, 1)
-    given_background_color = RGB(1, 2, 3)
-    given_line_pixels = [
-        [Pixel(char) for char in text1],
-        [Pixel(char) for char in text2],
-    ]
-
-    fragment = ColorizeMatrixFragment(
-        given_line_pixels,
-        foreground_color=given_foreground_color,
-        background_color=given_background_color
-    )
-
-    expected_line_pixels = [
-        [
-            Pixel(
-                char=char,
-                foreground_color=given_foreground_color,
-                background_color=given_background_color
-            ) for char in text1
-        ],
-        [
-            Pixel(
-                char=char,
-                foreground_color=given_foreground_color,
-                background_color=given_background_color
-            ) for char in text2
-        ],
-    ]
-    assert list(fragment[1]) == expected_line_pixels[1]
-    assert list(fragment[-1]) == expected_line_pixels[-1]
-
-    with pytest.raises(IndexError):
-        fragment[len(expected_line_pixels)]
-
-    with pytest.raises(IndexError):
-        fragment['Anything-else']
-
-
-def test_that_colorized_multi_line_has_the_length_equals_the_given_line():
-    assert len(ColorizeMatrixFragment([])) == 0
-    assert len(ColorizeMatrixFragment([[], []])) == 2

@@ -1,4 +1,4 @@
-from ascii_engine.elements.styles import colorize
+from ascii_engine.elements.styles import colorize, size
 from ascii_engine.elements.text import Text
 from ascii_engine.app import create_app
 from ascii_engine.colors import RGB
@@ -13,16 +13,11 @@ header = Text('Hello! Type anything:')
 
 
 def base_layout(width, height, elements):
-    layout = VerticalLayout(width, height)
+    layout = VerticalLayout(header, *elements)
     layout.set_style([
-        colorize(background_color=RGB(255, 0, 0))
+        colorize(background_color=RGB(255, 0, 0)),
+        size(width, height)
     ])
-
-    layout.add(header)
-
-    for element in elements:
-        layout.add(element)
-
     return layout
 
 

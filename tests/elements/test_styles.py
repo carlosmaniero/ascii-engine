@@ -23,8 +23,8 @@ def param(style, fragment, args):
 tests_data = [
     param(colorize, ColorizeMatrixFragment, (RGB(0, 0, 0), RGB(1, 2, 3))),
     param(size, FixedMatrixFragment, (10, 20)),
-    param(align_right, AlignMatrixRightLineFragment, (20,)),
-    param(align_center, AlignMatrixCenterLineFragment, (20,)),
+    param(align_right, AlignMatrixRightLineFragment, ()),
+    param(align_center, AlignMatrixCenterLineFragment, ()),
 ]
 
 

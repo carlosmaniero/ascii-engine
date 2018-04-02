@@ -1,11 +1,14 @@
 from ascii_engine.app import create_app
+from ascii_engine.elements.styles import colorize
 from ascii_engine.elements.text import Text
 from ascii_engine.colors import RGB
 
 
 def draw(screen, state):
     text_element = Text('Hello, {}!'.format(state))
-    text_element.set_foreground_color(RGB(255, 0, 0))
+    text_element.set_style([
+        colorize(RGB(255, 0, 0))
+    ])
     screen.add_element(text_element)
     return screen
 

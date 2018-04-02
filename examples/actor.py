@@ -1,3 +1,4 @@
+from ascii_engine.elements.styles import colorize
 from ascii_engine.elements.text import Text
 from ascii_engine.app import create_app
 from ascii_engine.colors import RGB
@@ -13,7 +14,9 @@ header = Text('Hello! Type anything:')
 
 def base_layout(width, height, elements):
     layout = VerticalLayout(width, height)
-    layout.set_background_color(RGB(255, 0, 0))
+    layout.set_style([
+        colorize(background_color=RGB(255, 0, 0))
+    ])
 
     layout.add(header)
 
@@ -33,7 +36,9 @@ def type_message(model):
     if model['special_key']:
         text_element = Text('You pressed a special key')
 
-    text_element.set_background_color(RGB(155, 200, 45))
+    text_element.set_style([
+        colorize(RGB(155, 200, 45))
+    ])
     return text_element
 
 

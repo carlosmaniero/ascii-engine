@@ -2,6 +2,7 @@ from unittest.mock import Mock
 import pytest
 import time
 
+from ascii_engine.elements.styles import colorize
 from tests.mocked_modules.curses import (mocked_curses, patch_curses,
                                          setup_curses)
 from ascii_engine.interfaces.curses_interface.render import CursesRender
@@ -69,8 +70,10 @@ async def test_that_given_a_foreground_and_background_a_curses_pair_is_created(
     expected_color_pair = 1
     mocked_curses.color_pair = Mock(return_value='color_1')
 
-    text_element.set_foreground_color(expected_fg)
-    text_element.set_background_color(expected_bg)
+    text_element.set_style([
+        colorize(expected_fg, expected_bg)
+    ])
+
     screen = Screen(2, 2)
     screen.add_element(text_element)
 

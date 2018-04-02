@@ -1,18 +1,16 @@
 class BaseElement:
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.background_color = None
-        self.foreground_color = None
+    def __init__(self):
+        self.styles = []
 
-    def get_width(self):
-        return self.width
+    def set_style(self, styles):
+        self.styles = styles
 
-    def get_height(self):
-        return self.height
+    def create_fragment(self):
+        raise NotImplementedError
 
-    def set_foreground_color(self, color):
-        self.foreground_color = color
+    def to_pixels(self):
+        fragment = self.create_fragment()
+        for style in self.styles:
+            fragment = style(fragment)
 
-    def set_background_color(self, color):
-        self.background_color = color
+        return fragment

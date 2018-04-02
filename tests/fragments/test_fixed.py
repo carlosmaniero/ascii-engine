@@ -99,3 +99,12 @@ def test_that_fixed_fragment_assumes_the_width_of_largest_line_by_default():
         iterations += 1
 
     assert iterations == len(expected_lines)
+
+
+def test_that_fixed_fragment_has_the_length_equal_the_given_height():
+    assert len(FixedMatrixFragment([], height=3)) == 3
+
+
+def test_that_all_lines_of_fixed_fragment_is_equal_the_given_width():
+    assert all(
+        len(line) == 3 for line in FixedMatrixFragment([], height=3, width=3))

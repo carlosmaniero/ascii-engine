@@ -9,6 +9,7 @@ from ascii_engine.fragments.colorize import ColorizeMatrixFragment, \
     ColorizeLineFragment
 from ascii_engine.fragments.converter import StringToPixelLineFragment, \
     StringToPixelMatrixFragment
+from ascii_engine.fragments.fixed import FixedLineFragment, FixedMatrixFragment
 from ascii_engine.pixel import Pixel
 from tests.fragments.utils import fragment_to_list
 
@@ -107,6 +108,24 @@ tests_data = [
         ]),
         given_matrix_fragment
     ),
+    param(
+        FixedLineFragment(given_line_fragment, 10),
+        given_line_fragment + [Pixel(' ')] * 5
+    ),
+    param(
+        FixedMatrixFragment(
+            lines_fragment=given_matrix_fragment,
+            width=10,
+            height=5
+        ),
+        [
+            given_matrix_fragment[0] + [Pixel(' ')] * 5,
+            given_matrix_fragment[1] + [Pixel(' ')] * 7,
+            given_matrix_fragment[2] + [Pixel(' ')] * 7,
+            [Pixel(' ')] * 10,
+            [Pixel(' ')] * 10
+        ]
+    )
 ]
 
 

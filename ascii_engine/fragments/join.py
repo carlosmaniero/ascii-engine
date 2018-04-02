@@ -43,5 +43,3 @@ class JoinVerticallyMatrixFragment(BaseFragment):
             if current_length + len(fragment) > index:
                 return fragment[index - current_length]
             current_length += len(fragment)
-
-        raise IndexError

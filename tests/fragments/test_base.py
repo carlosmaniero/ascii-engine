@@ -10,6 +10,7 @@ from ascii_engine.fragments.colorize import ColorizeMatrixFragment, \
 from ascii_engine.fragments.converter import StringToPixelLineFragment, \
     StringToPixelMatrixFragment
 from ascii_engine.fragments.fixed import FixedLineFragment, FixedMatrixFragment
+from ascii_engine.fragments.join import JoinVerticallyMatrixFragment
 from ascii_engine.pixel import Pixel
 from tests.fragments.utils import fragment_to_list
 
@@ -125,7 +126,14 @@ tests_data = [
             [Pixel(' ')] * 10,
             [Pixel(' ')] * 10
         ]
-    )
+    ),
+    param(
+        JoinVerticallyMatrixFragment([
+            [given_matrix_fragment[0], given_matrix_fragment[1]],
+            [given_matrix_fragment[2]]
+        ]),
+        given_matrix_fragment
+    ),
 ]
 
 
@@ -148,6 +156,18 @@ def test_raises_an_index_error_when_accessing_a_negative_length_as_index(
     with pytest.raises(IndexError):
         # noinspection PyStatementEffect
         fragment[-len(fragment)]
+
+
+@pytest.mark.parametrize('fragment, expected', tests_data)
+def test_raises_an_index_error_when_accessing_a_non_int_or_slice(
+        fragment, expected):
+    with pytest.raises(IndexError):
+        # noinspection PyStatementEffect
+        fragment['this-is-an-invalid-index']
+
+    with pytest.raises(IndexError):
+        # noinspection PyStatementEffect
+        fragment[Exception]
 
 
 @pytest.mark.parametrize('fragment, expected', tests_data)

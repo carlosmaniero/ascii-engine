@@ -36,8 +36,6 @@ class FixedLineFragment(BaseFragment):
             elif index < len(self):
                 return Pixel(' ')
 
-        raise IndexError
-
 
 class FixedMatrixFragment(BaseFragment):
     """
@@ -67,7 +65,6 @@ class FixedMatrixFragment(BaseFragment):
             return self._apply(self._get_fragment()[index])
         elif index < len(self):
             return self._apply([])
-        raise IndexError
 
     def _apply(self, line):
         return FixedLineFragment(line, self.__width)

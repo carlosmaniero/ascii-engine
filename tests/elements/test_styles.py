@@ -2,7 +2,11 @@ import pytest
 from unittest.mock import patch, call
 
 from ascii_engine.colors import RGB
-from ascii_engine.elements.styles import colorize
+from ascii_engine.elements.styles import colorize, size, align_right, \
+    align_center
+from ascii_engine.fragments.align import AlignMatrixRightLineFragment, \
+    AlignMatrixCenterLineFragment
+from ascii_engine.fragments.fixed import FixedMatrixFragment
 from ascii_engine.pixel import Pixel
 from ascii_engine.fragments.colorize import ColorizeMatrixFragment
 
@@ -17,7 +21,10 @@ def param(style, fragment, args):
 
 
 tests_data = [
-    param(colorize, ColorizeMatrixFragment, (RGB(0, 0, 0), RGB(1, 2, 3)))
+    param(colorize, ColorizeMatrixFragment, (RGB(0, 0, 0), RGB(1, 2, 3))),
+    param(size, FixedMatrixFragment, (10, 20)),
+    param(align_right, AlignMatrixRightLineFragment, (20,)),
+    param(align_center, AlignMatrixCenterLineFragment, (20,)),
 ]
 
 

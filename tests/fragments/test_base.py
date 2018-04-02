@@ -4,7 +4,8 @@ import pytest
 
 from ascii_engine.colors import RGB
 from ascii_engine.fragments.align import AlignCenterLineFragment, \
-    AlignRightLineFragment, AlignMatrixRightLineFragment
+    AlignRightLineFragment, AlignMatrixRightLineFragment, \
+    AlignMatrixCenterLineFragment
 from ascii_engine.fragments.colorize import ColorizeMatrixFragment, \
     ColorizeLineFragment
 from ascii_engine.fragments.converter import StringToPixelLineFragment, \
@@ -56,6 +57,15 @@ tests_data = [
             [Pixel(' ')] * 5 + given_matrix_fragment[0],
             [Pixel(' ')] * 7 + given_matrix_fragment[1],
             [Pixel(' ')] * 7 + given_matrix_fragment[2],
+        ]
+    ),
+
+    param(
+        AlignMatrixCenterLineFragment(given_matrix_fragment, 10),
+        [
+            [Pixel(' ')] * 2 + given_matrix_fragment[0] + [Pixel(' ')] * 3,
+            [Pixel(' ')] * 3 + given_matrix_fragment[1] + [Pixel(' ')] * 4,
+            [Pixel(' ')] * 3 + given_matrix_fragment[2] + [Pixel(' ')] * 4,
         ]
     ),
     param(

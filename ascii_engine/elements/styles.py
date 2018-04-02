@@ -1,4 +1,7 @@
+from ascii_engine.fragments.align import AlignMatrixRightLineFragment, \
+    AlignMatrixCenterLineFragment
 from ascii_engine.fragments.colorize import ColorizeMatrixFragment
+from ascii_engine.fragments.fixed import FixedMatrixFragment
 
 
 def colorize(foreground_color=None, background_color=None):
@@ -7,3 +10,15 @@ def colorize(foreground_color=None, background_color=None):
         foreground_color,
         background_color
     )
+
+
+def size(width=None, height=None):
+    return lambda fragment: FixedMatrixFragment(fragment, width, height)
+
+
+def align_right(width):
+    return lambda fragment: AlignMatrixRightLineFragment(fragment, width)
+
+
+def align_center(width):
+    return lambda fragment: AlignMatrixCenterLineFragment(fragment, width)

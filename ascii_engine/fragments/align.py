@@ -83,3 +83,15 @@ class AlignCenterLineFragment(BaseFragment):
             return Pixel(' ')
         else:
             return self._get_fragment()[index - self.__start_pixel]
+
+
+class AlignMatrixCenterLineFragment(BaseFragment):
+    """
+    Given a Matrix Fragment it will put each line of the matrix to the center
+    """
+    def __init__(self, fragment, width):
+        self.__width = width
+        super().__init__(fragment)
+
+    def _apply(self, element_part):
+        return AlignCenterLineFragment(element_part, self.__width)

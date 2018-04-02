@@ -33,7 +33,6 @@ given_matrix_fragment = [
     [
         Pixel('.'),
         Pixel('.'),
-        Pixel('.'),
     ]
 ]
 
@@ -52,20 +51,20 @@ tests_data = [
         [Pixel(' ')] * 5 + given_line_fragment
     ),
     param(
-        AlignMatrixRightLineFragment(given_matrix_fragment, 10),
+        AlignMatrixRightLineFragment(given_matrix_fragment),
         [
-            [Pixel(' ')] * 5 + given_matrix_fragment[0],
-            [Pixel(' ')] * 7 + given_matrix_fragment[1],
-            [Pixel(' ')] * 7 + given_matrix_fragment[2],
+            [Pixel(' ')] * 0 + given_matrix_fragment[0],
+            [Pixel(' ')] * 2 + given_matrix_fragment[1],
+            [Pixel(' ')] * 3 + given_matrix_fragment[2],
         ]
     ),
 
     param(
-        AlignMatrixCenterLineFragment(given_matrix_fragment, 10),
+        AlignMatrixCenterLineFragment(given_matrix_fragment),
         [
-            [Pixel(' ')] * 2 + given_matrix_fragment[0] + [Pixel(' ')] * 3,
-            [Pixel(' ')] * 3 + given_matrix_fragment[1] + [Pixel(' ')] * 4,
-            [Pixel(' ')] * 3 + given_matrix_fragment[2] + [Pixel(' ')] * 4,
+            [Pixel(' ')] * 0 + given_matrix_fragment[0] + [Pixel(' ')] * 0,
+            [Pixel(' ')] * 1 + given_matrix_fragment[1] + [Pixel(' ')] * 1,
+            [Pixel(' ')] * 1 + given_matrix_fragment[2] + [Pixel(' ')] * 2,
         ]
     ),
     param(
@@ -103,7 +102,6 @@ tests_data = [
             [
                 Pixel('.', RGB(3, 2, 1), RGB(1, 2, 3)),
                 Pixel('.', RGB(3, 2, 1), RGB(1, 2, 3)),
-                Pixel('.', RGB(3, 2, 1), RGB(1, 2, 3)),
             ]
         ]
     ),
@@ -115,7 +113,7 @@ tests_data = [
         StringToPixelMatrixFragment([
             "Hello",
             "Bye",
-            "..."
+            ".."
         ]),
         given_matrix_fragment
     ),
@@ -132,7 +130,7 @@ tests_data = [
         [
             given_matrix_fragment[0] + [Pixel(' ')] * 5,
             given_matrix_fragment[1] + [Pixel(' ')] * 7,
-            given_matrix_fragment[2] + [Pixel(' ')] * 7,
+            given_matrix_fragment[2] + [Pixel(' ')] * 8,
             [Pixel(' ')] * 10,
             [Pixel(' ')] * 10
         ]

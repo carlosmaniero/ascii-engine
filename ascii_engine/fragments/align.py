@@ -3,6 +3,7 @@ This module provides an easy way to align fragments on screen.
 """
 
 from ascii_engine.fragments.base import BaseFragment
+from ascii_engine.fragments.utils import get_max_line_width
 from ascii_engine.pixel import Pixel
 
 
@@ -13,12 +14,6 @@ class AlignRightLineFragment(BaseFragment):
     >>> given_fragment = [Pixel('a'), Pixel('b')]
     >>> expected_fragment = [Pixel(' '), Pixel(' '), Pixel('a'), Pixel('b')]
     >>> list(AlignRightLineFragment(given_fragment), 4) == expected_fragment
-    ... True
-
-    If the given width is lower than the fragment it keep align left.
-
-    >>> given_fragment = [Pixel('a'), Pixel('b')]
-    >>> list(AlignRightLineFragment(given_fragment), 1) == [Pixel('a')]
     ... True
     """
     def __init__(self, fragment, width):
@@ -40,8 +35,8 @@ class AlignMatrixRightLineFragment(BaseFragment):
     """
     Given a Matrix Fragment it will put each line of the matrix to the right
     """
-    def __init__(self, fragment, width):
-        self.__width = width
+    def __init__(self, fragment):
+        self.__width = get_max_line_width(fragment)
         super().__init__(fragment)
 
     def _apply(self, element_part):
@@ -68,10 +63,6 @@ class AlignCenterLineFragment(BaseFragment):
         self.__start_pixel = (width - len(fragment)) // 2
         self.__end_pixel = self.__start_pixel + len(fragment) - 1
 
-        if width < len(fragment):
-            self.__start_pixel = 0
-            self.__end_pixel = width
-
     def __iter__(self):
         for index in range(len(self)):
             yield self._get_index(index)
@@ -89,8 +80,8 @@ class AlignMatrixCenterLineFragment(BaseFragment):
     """
     Given a Matrix Fragment it will put each line of the matrix to the center
     """
-    def __init__(self, fragment, width):
-        self.__width = width
+    def __init__(self, fragment):
+        self.__width = get_max_line_width(fragment)
         super().__init__(fragment)
 
     def _apply(self, element_part):

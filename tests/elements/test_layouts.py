@@ -37,14 +37,14 @@ def test_that_when_the_background_is_defined_it_is_used_only_in_blank_chars():
         layout.to_pixels(),
         [
             [
-                Pixel('H', foreground_color=text_fg_color, background_color=text_bg_color),
-                Pixel('i', foreground_color=text_fg_color, background_color=text_bg_color),
+                Pixel('H', text_fg_color, text_bg_color),
+                Pixel('i', text_fg_color, text_bg_color),
                 Pixel(' ', background_color=layout_color)
             ],
             [
-                Pixel('B', foreground_color=text_fg_color, background_color=layout_color),
-                Pixel('y', foreground_color=text_fg_color, background_color=layout_color),
-                Pixel('e', foreground_color=text_fg_color, background_color=layout_color)
+                Pixel('B', text_fg_color, layout_color),
+                Pixel('y', text_fg_color, layout_color),
+                Pixel('e', text_fg_color, layout_color)
             ],
             [
                 Pixel('.', background_color=layout_color),

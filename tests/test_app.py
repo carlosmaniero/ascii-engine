@@ -32,14 +32,17 @@ def create_mock_app(state, event_loop):
 
 
 @pytest.mark.asyncio
-async def test_that_given_a_draw_function_it_is_called_with_the_given_initial_state(event_loop):
+async def test_that_the_given_draw_is_called_with_the_initial_state(
+        event_loop):
     initial_state = 42
     app = create_mock_app(initial_state, event_loop)
     await event_loop.run_in_executor(None, app.start)
-    app.draw.assert_called_once_with(app.interface.create_empty_screen.return_value, initial_state)
+    app.draw.assert_called_once_with(
+        app.interface.create_empty_screen.return_value, initial_state)
 
 
-def test_that_when_the_app_render_is_called_it_call_the_draw_and_send_the_result_to_interface(event_loop):
+def test_that_the_draw_is_called_on_render_and_its_result_is_send_to_interface(
+        event_loop):
     initial_state = 42
     screen = Screen(1, 2)
     app = create_mock_app(initial_state, event_loop)
@@ -62,7 +65,8 @@ async def test_that_the_when_app_starts_it_renders_the_draw(event_loop):
 
 
 @pytest.mark.asyncio
-async def test_that_when_an_registered_action_returns_a_value_the_action_is_called_and_the_draw_is_rendered(event_loop):
+async def test_that_the_actor_is_executed_when_a_subscription_returns_value(
+        event_loop):
     initial_state = 41
     app = create_mock_app(initial_state, event_loop)
 
@@ -80,7 +84,7 @@ async def test_that_when_an_registered_action_returns_a_value_the_action_is_call
 
 
 @pytest.mark.asyncio
-async def test_that_when_an_registered_action_is_called_until_has_no_next_action(event_loop):
+async def test_that_when_a_subscription_await_until_no_next_action(event_loop):
     initial_state = 41
     app = create_mock_app(initial_state, event_loop)
 
@@ -123,5 +127,3 @@ def test_that_app_returns_the_loop(event_loop):
     loop = Mock()
     app.loop = loop
     assert app.get_loop() == loop
-
-

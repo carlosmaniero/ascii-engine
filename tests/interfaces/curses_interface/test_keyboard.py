@@ -2,7 +2,8 @@ from unittest.mock import Mock
 
 import pytest
 
-from ascii_engine.interfaces.curses_interface.keyboard import CursesKeyboardSubscription
+from ascii_engine.interfaces.curses_interface.keyboard import \
+    CursesKeyboardSubscription
 from ascii_engine.interfaces.base.keyboard import KeypressEvent
 from tests.mocked_modules.curses import setup_curses
 
@@ -19,7 +20,8 @@ async def test_that_curses_interface_read_the_input_from_curses(event_loop):
 
 
 @pytest.mark.asyncio
-async def test_that_curses_interface_read_the_input_from_curses_given_a_special_key(event_loop):
+async def test_that_curses_reads_the_input_from_curses_given_a_special_key(
+        event_loop):
     keyboard = CursesKeyboardSubscription(event_loop)
     keyboard.interface.get_wch = Mock(return_value=297)
 
@@ -29,7 +31,8 @@ async def test_that_curses_interface_read_the_input_from_curses_given_a_special_
 
 
 @pytest.mark.asyncio
-async def test_that_the_keyboard_subscription_return_an_action_given_a_char(event_loop):
+async def test_that_the_keyboard_subscription_returns_an_action_given_a_char(
+        event_loop):
     subscription = CursesKeyboardSubscription(event_loop)
     subscription.interface.get_wch = Mock(return_value='a')
     action = await subscription.listen()
@@ -40,7 +43,8 @@ async def test_that_the_keyboard_subscription_return_an_action_given_a_char(even
 
 
 @pytest.mark.asyncio
-async def test_that_the_keyboard_subscription_return_an_action_given_a_special_key(event_loop):
+async def test_keyboard_subscription_returns_an_action_given_a_special_key(
+        event_loop):
     subscription = CursesKeyboardSubscription(event_loop)
     subscription.interface.get_wch = Mock(return_value=260)
     action = await subscription.listen()

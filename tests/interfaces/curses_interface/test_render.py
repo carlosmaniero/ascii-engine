@@ -2,7 +2,8 @@ from unittest.mock import Mock
 import pytest
 import time
 
-from tests.mocked_modules.curses import mocked_curses, patch_curses, setup_curses
+from tests.mocked_modules.curses import (mocked_curses, patch_curses,
+                                         setup_curses)
 from ascii_engine.interfaces.curses_interface.render import CursesRender
 from ascii_engine.screen import Screen
 from ascii_engine.elements.text import Text
@@ -18,6 +19,7 @@ async def wait_for_render(curses_interface, event_loop):
         time.sleep,
         0
     )
+
 
 @patch_curses
 def test_that_interface_is_well_configured():
@@ -58,7 +60,8 @@ def test_that_the_terminal_is_well_reconfigured_after_stop_call():
 
 
 @pytest.mark.asyncio
-async def test_that_given_a_foreground_and_background_a_curses_pair_is_created(event_loop):
+async def test_that_given_a_foreground_and_background_a_curses_pair_is_created(
+        event_loop):
     setup_curses()
     text_element = Text('ab\ncd')
     expected_fg = RGB(0, 0, 0)
@@ -95,4 +98,3 @@ def test_that_the_interface_returns_the_screen_with_terminal_size():
     screen = curses_interface.create_empty_screen()
     assert screen.get_width() == 19
     assert screen.get_height() == 10
-

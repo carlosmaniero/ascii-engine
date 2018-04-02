@@ -3,7 +3,7 @@ from ascii_engine.fragments.align import AlignRightLineFragment, \
     AlignCenterLineFragment
 
 
-def test_that_the_align_right_line_fragment_is_slices_the_pixel_part_when_the_width_is_bigger_than_the_fragment():
+def test_that_the_align_right_slices_the_blank_part():
     given_line_fragment = [
         Pixel('a'),
         Pixel('b'),
@@ -16,7 +16,7 @@ def test_that_the_align_right_line_fragment_is_slices_the_pixel_part_when_the_wi
     assert given_line_fragment == list(the_fragment[5:])
 
 
-def test_that_the_align_right_line_fragment_truncates_the_given_fragment_on_the_left():
+def test_that_the_align_right_truncates_the_given_fragment_on_the_left():
     given_line_fragment = [
         Pixel('a'),
         Pixel('b'),
@@ -32,7 +32,7 @@ def test_that_the_align_right_line_fragment_truncates_the_given_fragment_on_the_
     assert list(the_fragment) == expected_fragment
 
 
-def test_that_the_align_center_line_put_the_fragment_one_pixel_left_when_the_width_is_odd():
+def test_that_the_align_center_put_keep_pixels_left_given_odd_width():
     given_line_fragment = [Pixel('a'), Pixel('b')]
     given_width = 5
     expected_fragment = [

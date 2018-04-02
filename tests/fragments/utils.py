@@ -1,5 +1,3 @@
-import pytest
-
 from ascii_engine.pixel import Pixel
 
 
@@ -7,7 +5,6 @@ def fragment_to_list(fragment):
     if isinstance(fragment, Pixel):
         return fragment
     return [fragment_to_list(element) for element in fragment]
-
 
 
 class TestCaseFragmentBuilder:

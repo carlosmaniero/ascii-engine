@@ -41,7 +41,7 @@ def test_that_fixed_fragment_can_fixes_only_the_width():
 
     iterations = 0
     for expected_line, line in zip(expected_lines, fragment):
-        assert expected_line == list(line)
+        assert expected_line == fragment_to_list(line)
         iterations += 1
 
     assert iterations == len(expected_lines)
@@ -68,7 +68,7 @@ def test_that_fixed_fragment_truncates_given_a_larger_content():
 
     iterations = 0
     for index, line in enumerate(fragment):
-        assert list(line) == expected_lines[index]
+        assert fragment_to_list(line) == expected_lines[index]
         iterations += 1
 
     assert iterations == len(expected_lines)
@@ -95,7 +95,7 @@ def test_that_fixed_fragment_assumes_the_width_of_largest_line_by_default():
 
     iterations = 0
     for expected_line, line in zip(expected_lines, fragment):
-        assert expected_line == list(line)
+        assert expected_line == fragment_to_list(line)
         iterations += 1
 
     assert iterations == len(expected_lines)

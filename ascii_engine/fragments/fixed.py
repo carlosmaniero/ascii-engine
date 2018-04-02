@@ -2,7 +2,6 @@
 This module provide fragments to help you to define a fixed size for fragments
 """
 from ascii_engine.fragments.base import BaseFragment
-from ascii_engine.fragments.converter import StringToPixelLineFragment
 from ascii_engine.fragments.utils import get_max_line_width
 from ascii_engine.pixel import Pixel
 

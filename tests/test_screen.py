@@ -22,6 +22,7 @@ def test_that_screen_render_returns_an_empty_matrix_of_colors():
         [BLANK_PIXEL, BLANK_PIXEL, BLANK_PIXEL]
     ])
 
+
 def test_that_screen_render_a_given_element():
     screen = Screen(5, 1)
     text_element = Text('Hello')
@@ -38,7 +39,7 @@ def test_that_screen_do_element_overlap():
     assertPixelsAreEquals(screen.render(), Text('Byelo').to_pixels())
 
 
-def test_that_screen_render_elements_given_an_possition():
+def test_that_screen_render_elements_given_an_position():
     screen = Screen(5, 2)
     text_element1 = Text('Hello')
     text_element2 = Text('Bye')

@@ -19,10 +19,11 @@ def test_pixels_are_equals_when_they_have_the_same_background():
     assert Pixel('a', background_color=RED) == Pixel('a', background_color=RED)
     assert Pixel('a', background_color=RED) != Pixel('a')
 
+
 def test_pixel_is_different_of_anything_that_is_not_a_pixel():
     assert Pixel('a') != 'a'
     assert Pixel('1') != 1
 
 
-def test_that_pixel_repl_reteurn_the_class_name_and_the_given_char():
+def test_that_pixel_repl_returns_the_class_name_and_the_given_char():
     assert repr(Pixel('a')) == "Pixel('a')"

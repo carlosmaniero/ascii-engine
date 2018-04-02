@@ -8,6 +8,7 @@ mocked_curses = types.ModuleType(curses_module_name)
 mocked_curses.initscr = Mock(name=curses_module_name + '.initscr')
 sys.modules[curses_module_name] = mocked_curses
 
+
 def setup_curses():
     mocked_curses.newwin = Mock(name=curses_module_name + '.newwin')
     mocked_curses.initscr = Mock(name=curses_module_name + '.initscr')
@@ -18,7 +19,10 @@ def setup_curses():
     mocked_curses.nocbreak = Mock(name=curses_module_name + '.nocbreak')
     mocked_curses.endwin = Mock(name=curses_module_name + '.endwin')
     mocked_curses.init_pair = Mock(name=curses_module_name + '.init_pair')
-    mocked_curses.color_pair = Mock(name=curses_module_name + '.color_pair', return_value=1)
+    mocked_curses.color_pair = Mock(
+        name=curses_module_name + '.color_pair',
+        return_value=1
+    )
 
 
 def patch_curses(fn):

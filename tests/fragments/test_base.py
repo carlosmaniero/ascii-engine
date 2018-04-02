@@ -35,16 +35,20 @@ given_matrix_fragment = [
 ]
 
 
+def param(fragment, expected):
+    return pytest.param(fragment, expected, id=type(fragment).__name__)
+
+
 tests_data = [
-    ParameterTestData(
+    param(
         AlignCenterLineFragment(given_line_fragment, 11),
-        [Pixel(' ')] * 3 + given_line_fragment + [Pixel(' ')] * 3
+        [Pixel(' ')] * 3 + given_line_fragment + [Pixel(' ')] * 3,
     ),
-    ParameterTestData(
+    param(
         AlignRightLineFragment(given_line_fragment, 10),
         [Pixel(' ')] * 5 + given_line_fragment
     ),
-    ParameterTestData(
+    param(
         AlignMatrixRightLineFragment(given_matrix_fragment, 10),
         [
             [Pixel(' ')] * 5 + given_matrix_fragment[0],
@@ -52,7 +56,7 @@ tests_data = [
             [Pixel(' ')] * 7 + given_matrix_fragment[2],
         ]
     ),
-    ParameterTestData(
+    param(
         ColorizeLineFragment(
             given_line_fragment,
             foreground_color=RGB(3, 2, 1),
@@ -65,7 +69,7 @@ tests_data = [
             Pixel('o', RGB(3, 2, 1), RGB(1, 2, 3)),
         ]
     ),
-    ParameterTestData(
+    param(
         ColorizeMatrixFragment(
             given_matrix_fragment,
             foreground_color=RGB(3, 2, 1),
@@ -91,11 +95,11 @@ tests_data = [
             ]
         ]
     ),
-    ParameterTestData(
+    param(
         StringToPixelLineFragment(given_text),
         given_line_fragment
     ),
-    ParameterTestData(
+    param(
         StringToPixelMatrixFragment([
             "Hello",
             "Bye",
@@ -105,112 +109,115 @@ tests_data = [
     ),
 ]
 
-@pytest.mark.parametrize('test_data', tests_data)
-def test_assert_elements_has_the_same_length(test_data):
-    assert len(test_data.fragment) == len(test_data.expected)
+
+@pytest.mark.parametrize('fragment, expected', tests_data)
+def test_assert_elements_has_the_same_length(fragment, expected):
+    assert len(fragment) == len(expected)
 
 
-@pytest.mark.parametrize('test_data', tests_data)
+@pytest.mark.parametrize('fragment, expected', tests_data)
 def test_raises_an_index_error_when_accessing_fragment_length_as_index(
-        test_data):
+        fragment, expected):
     with pytest.raises(IndexError):
         # noinspection PyStatementEffect
-        test_data.fragment[len(test_data.fragment)]
+        fragment[len(fragment)]
 
 
-@pytest.mark.parametrize('test_data', tests_data)
+@pytest.mark.parametrize('fragment, expected', tests_data)
 def test_raises_an_index_error_when_accessing_a_negative_length_as_index(
-        test_data):
+        fragment, expected):
     with pytest.raises(IndexError):
         # noinspection PyStatementEffect
-        test_data.fragment[-len(test_data.fragment)]
+        fragment[-len(fragment)]
 
 
-@pytest.mark.parametrize('test_data', tests_data)
-def test_line_is_the_expected_when_iterated(test_data):
-    assert fragment_to_list(test_data.fragment) == test_data.expected
+@pytest.mark.parametrize('fragment, expected', tests_data)
+def test_line_is_the_expected_when_iterated(fragment, expected):
+    assert fragment_to_list(fragment) == expected
 
 
-@pytest.mark.parametrize('test_data', tests_data)
-def test_line_is_the_expected_when_iterated(test_data):
-    assert fragment_to_list(test_data.fragment) == test_data.expected
+@pytest.mark.parametrize('fragment, expected', tests_data)
+def test_line_is_the_expected_when_iterated(fragment, expected):
+    assert fragment_to_list(fragment) == expected
 
 
-@pytest.mark.parametrize('test_data', tests_data)
-def test_line_is_the_expected_when_accessing_by_index(test_data):
-    for index, pixel in enumerate(test_data.expected):
-        assert fragment_to_list(test_data.fragment[index]) == pixel
+@pytest.mark.parametrize('fragment, expected', tests_data)
+def test_line_is_the_expected_when_accessing_by_index(fragment, expected):
+    for index, pixel in enumerate(expected):
+        assert fragment_to_list(fragment[index]) == pixel
 
 
-@pytest.mark.parametrize('test_data', tests_data)
-def test_line_is_the_expected_when_accessing_by_reverse_index(test_data):
-    for index in range(1 - len(test_data.fragment), 1, 1):
+@pytest.mark.parametrize('fragment, expected', tests_data)
+def test_line_is_the_expected_when_accessing_by_reverse_index(fragment,
+                                                              expected):
+    for index in range(1 - len(fragment), 1, 1):
         assert fragment_to_list(
-            test_data.fragment[index]) == test_data.expected[index]
+            fragment[index]) == expected[index]
 
 
-@pytest.mark.parametrize('test_data', tests_data)
-def raises_an_index_error_when_accessing_fragment_length_as_index(test_data):
+@pytest.mark.parametrize('fragment, expected', tests_data)
+def raises_an_index_error_when_accessing_fragment_length_as_index(fragment,
+                                                                  expected):
     with pytest.raises(IndexError):
         # noinspection PyStatementEffect
-        test_data.fragment[len(test_data.fragment)]
+        fragment[len(fragment)]
 
 
-@pytest.mark.parametrize('test_data', tests_data)
-def test_fragment_is_sliceable(test_data):
-    half = len(test_data.fragment) // 2
+@pytest.mark.parametrize('fragment, expected', tests_data)
+def test_fragment_is_sliceable(fragment, expected):
+    half = len(fragment) // 2
     assert fragment_to_list(
-        test_data.fragment[:half]) == test_data.expected[:half]
-
-    assert fragment_to_list(
-        test_data.fragment[half:]) == test_data.expected[half:]
+        fragment[:half]) == expected[:half]
 
     assert fragment_to_list(
-        test_data.fragment[::2]) == test_data.expected[::2]
+        fragment[half:]) == expected[half:]
 
     assert fragment_to_list(
-        test_data.fragment[half::2]) == test_data.expected[half::2]
+        fragment[::2]) == expected[::2]
 
     assert fragment_to_list(
-        test_data.fragment[:half:2]) == test_data.expected[:half:2]
+        fragment[half::2]) == expected[half::2]
 
     assert fragment_to_list(
-        test_data.fragment[half:half]) == []
+        fragment[:half:2]) == expected[:half:2]
 
     assert fragment_to_list(
-        test_data.fragment[::-1]) == test_data.expected[::-1]
+        fragment[half:half]) == []
 
     assert fragment_to_list(
-        test_data.fragment[:half:-1]) == test_data.expected[:half:-1]
+        fragment[::-1]) == expected[::-1]
 
     assert fragment_to_list(
-        test_data.fragment[half::-1]) == test_data.expected[half::-1]
+        fragment[:half:-1]) == expected[:half:-1]
 
     assert fragment_to_list(
-        test_data.fragment[:-1:-1]) == test_data.expected[:-1:-1]
+        fragment[half::-1]) == expected[half::-1]
 
     assert fragment_to_list(
-        test_data.fragment[:-half:-1]) == test_data.expected[:-half:-1]
+        fragment[:-1:-1]) == expected[:-1:-1]
 
     assert fragment_to_list(
-        test_data.fragment[-2::-1]) == test_data.expected[-2::-1]
+        fragment[:-half:-1]) == expected[:-half:-1]
 
     assert fragment_to_list(
-        test_data.fragment[-2:half:-1]) == test_data.expected[-2:half:-1]
+        fragment[-2::-1]) == expected[-2::-1]
+
+    assert fragment_to_list(
+        fragment[-2:half:-1]) == expected[-2:half:-1]
 
 
-@pytest.mark.parametrize('test_data', tests_data)
-def test_fragment_slices_length(test_data):
-    half = len(test_data.fragment) // 2
+@pytest.mark.parametrize('fragment, expected', tests_data)
+def test_fragment_slices_length(fragment, expected):
+    half = len(fragment) // 2
     assert len(
-        test_data.fragment[:half]) == len(test_data.expected[:half])
+        fragment[:half]) == len(expected[:half])
     assert len(
-        test_data.fragment[half:]) == len(test_data.expected[half:])
+        fragment[half:]) == len(expected[half:])
     assert len(
-        test_data.fragment[::2]) == len(test_data.expected[::2])
+        fragment[::2]) == len(expected[::2])
     assert len(
-        test_data.fragment[half::2]) == len(test_data.expected[half::2])
+        fragment[half::2]) == len(expected[half::2])
     assert len(
-        test_data.fragment[:half:2]) == len(test_data.expected[:half:2])
+        fragment[:half:2]) == len(expected[:half:2])
     assert len(
-        test_data.fragment[half:half]) == 0
+        fragment[half:half]) == 0

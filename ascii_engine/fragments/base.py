@@ -52,7 +52,7 @@ class BaseFragment:
         """
         return element_part
 
-    def _get_fragment(self):
+    def get_fragment(self):
         """
         Return the given fragment
         """
@@ -84,7 +84,7 @@ class BaseFragment:
         that get the fragment element with the given index and return the
         element by applying the change described in _apply method.
         """
-        return self._apply(self._get_fragment()[index])
+        return self._apply(self.get_fragment()[index])
 
     def __getitem__(self, item):
         """
@@ -138,10 +138,10 @@ class SliceIterableFragment(BaseFragment):
             if self.__start is None:
                 if self.__stop is not None and self._calculate_stop() < 0:
                     return -1
-                return len(self._get_fragment()) - 1
+                return len(self.get_fragment()) - 1
 
             if self.__start < 0:
-                return len(self._get_fragment()) + self.__start
+                return len(self.get_fragment()) + self.__start
 
         return self.__start or 0
 
@@ -153,8 +153,8 @@ class SliceIterableFragment(BaseFragment):
         if self.__stop is None and self._is_reverse():
             return -1
 
-        stop = self.__stop or len(self._get_fragment())
-        return min(len(self._get_fragment()), stop)
+        stop = self.__stop or len(self.get_fragment())
+        return min(len(self.get_fragment()), stop)
 
     def _calculate_step(self):
         return self.__step or 1
@@ -168,7 +168,7 @@ class SliceIterableFragment(BaseFragment):
 
     def _get_index(self, index):
         slice_index = self._get_range()[index]
-        return self._get_fragment()[slice_index]
+        return self.get_fragment()[slice_index]
 
     def __len__(self):
         return len(self._get_range())

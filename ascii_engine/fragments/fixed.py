@@ -30,8 +30,8 @@ class FixedLineFragment(BaseFragment):
 
     def _get_index(self, index):
         if index < len(self):
-            if index < len(self._get_fragment()):
-                return self._apply(self._get_fragment()[index])
+            if index < len(self.get_fragment()):
+                return self._apply(self.get_fragment()[index])
             elif index < len(self):
                 return Pixel(' ')
 
@@ -54,16 +54,23 @@ class FixedMatrixFragment(BaseFragment):
         if self.__width is None:
             self.__width = get_max_line_width(lines_fragment)
 
+        self.__height = height
         if height is None:
-            height = len(lines_fragment)
+            self.__height = len(lines_fragment)
 
-        super().__init__(lines_fragment[:height], height)
+        super().__init__(lines_fragment[:self.__height], self.__height)
 
     def _get_index(self, index):
-        if index < len(self._get_fragment()):
-            return self._apply(self._get_fragment()[index])
+        if index < len(self.get_fragment()):
+            return self._apply(self.get_fragment()[index])
         elif index < len(self):
             return self._apply([])
 
     def _apply(self, line):
         return FixedLineFragment(line, self.__width)
+
+    def get_width(self):
+        return self.__width
+
+    def get_height(self):
+        return self.__height

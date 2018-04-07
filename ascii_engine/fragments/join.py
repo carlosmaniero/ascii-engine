@@ -33,13 +33,13 @@ class JoinVerticallyMatrixFragment(BaseFragment):
         super().__init__(fragments, length)
 
     def __iter__(self):
-        for fragment in self._get_fragment():
+        for fragment in self.get_fragment():
             for line in fragment:
                 yield line
 
     def _get_index(self, index):
         current_length = 0
-        for fragment in self._get_fragment():
+        for fragment in self.get_fragment():
             if current_length + len(fragment) > index:
                 return fragment[index - current_length]
             current_length += len(fragment)

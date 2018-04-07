@@ -18,7 +18,7 @@ class AlignRightLineFragment(BaseFragment):
     """
     def __init__(self, fragment, width):
         super().__init__(fragment, width)
-        self.__start_pixel = max(width - len(self._get_fragment()), 0)
+        self.__start_pixel = max(width - len(self.get_fragment()), 0)
 
     def __iter__(self):
         for index in range(len(self)):
@@ -28,7 +28,7 @@ class AlignRightLineFragment(BaseFragment):
         if index < self.__start_pixel:
             return Pixel(' ')
         else:
-            return self._get_fragment()[index - self.__start_pixel]
+            return self.get_fragment()[index - self.__start_pixel]
 
 
 class AlignMatrixRightLineFragment(BaseFragment):
@@ -73,7 +73,7 @@ class AlignCenterLineFragment(BaseFragment):
         elif index > self.__end_pixel:
             return Pixel(' ')
         else:
-            return self._get_fragment()[index - self.__start_pixel]
+            return self.get_fragment()[index - self.__start_pixel]
 
 
 class AlignMatrixCenterLineFragment(BaseFragment):

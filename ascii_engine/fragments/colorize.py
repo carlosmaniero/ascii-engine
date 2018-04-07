@@ -49,3 +49,9 @@ class ColorizeMatrixFragment(BaseFragment):
             self.__foreground_color,
             self.__background_color
         )
+
+    def get_background_color(self):
+        return self.__background_color
+
+    def get_foreground_color(self):
+        return self.__foreground_color

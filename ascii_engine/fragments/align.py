@@ -35,8 +35,11 @@ class AlignMatrixRightLineFragment(BaseFragment):
     """
     Given a Matrix Fragment it will put each line of the matrix to the right
     """
-    def __init__(self, fragment):
-        self.__width = get_max_line_width(fragment)
+    def __init__(self, fragment, width=None):
+        self.__width = width
+
+        if not width:
+            self.__width = get_max_line_width(fragment)
         super().__init__(fragment)
 
     def _apply(self, element_part):
@@ -60,8 +63,13 @@ class AlignCenterLineFragment(BaseFragment):
     """
     def __init__(self, fragment, width):
         super().__init__(fragment, width)
+
         self.__start_pixel = (width - len(fragment)) // 2
         self.__end_pixel = self.__start_pixel + len(fragment) - 1
+
+        if width <= len(fragment):
+            self.__start_pixel = 0
+            self.__end_pixel = len(fragment)
 
     def __iter__(self):
         for index in range(len(self)):
@@ -73,6 +81,7 @@ class AlignCenterLineFragment(BaseFragment):
         elif index > self.__end_pixel:
             return Pixel(' ')
         else:
+            print(index)
             return self.get_fragment()[index - self.__start_pixel]
 
 
@@ -80,8 +89,10 @@ class AlignMatrixCenterLineFragment(BaseFragment):
     """
     Given a Matrix Fragment it will put each line of the matrix to the center
     """
-    def __init__(self, fragment):
-        self.__width = get_max_line_width(fragment)
+    def __init__(self, fragment, width=None):
+        self.__width = width
+        if not width:
+            self.__width = get_max_line_width(fragment)
         super().__init__(fragment)
 
     def _apply(self, element_part):

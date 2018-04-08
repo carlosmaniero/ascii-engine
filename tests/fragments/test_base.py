@@ -37,8 +37,11 @@ given_matrix_fragment = [
 ]
 
 
-def param(fragment, expected):
-    return pytest.param(fragment, expected, id=type(fragment).__name__)
+def param(fragment, expected, description=None):
+    test_name = type(fragment).__name__
+    if description:
+        test_name += ': ' + description
+    return pytest.param(fragment, expected, id=test_name)
 
 
 tests_data = [
@@ -47,8 +50,18 @@ tests_data = [
         [Pixel(' ')] * 3 + given_line_fragment + [Pixel(' ')] * 3,
     ),
     param(
+        AlignCenterLineFragment(given_line_fragment, 3),
+        given_line_fragment[:3],
+        description='with a width less than the fragment'
+    ),
+    param(
         AlignRightLineFragment(given_line_fragment, 10),
         [Pixel(' ')] * 5 + given_line_fragment
+    ),
+    param(
+        AlignRightLineFragment(given_line_fragment, 3),
+        given_line_fragment[:3],
+        description='with a width less than the fragment'
     ),
     param(
         AlignMatrixRightLineFragment(given_matrix_fragment),
@@ -58,7 +71,24 @@ tests_data = [
             [Pixel(' ')] * 3 + given_matrix_fragment[2],
         ]
     ),
-
+    param(
+        AlignMatrixRightLineFragment(given_matrix_fragment, 10),
+        [
+            [Pixel(' ')] * 5 + given_matrix_fragment[0],
+            [Pixel(' ')] * 7 + given_matrix_fragment[1],
+            [Pixel(' ')] * 8 + given_matrix_fragment[2],
+        ],
+        description='with a fixed width'
+    ),
+    param(
+        AlignMatrixRightLineFragment(given_matrix_fragment, 3),
+        [
+            [Pixel(' ')] * 0 + given_matrix_fragment[0][:3],
+            [Pixel(' ')] * 0 + given_matrix_fragment[1],
+            [Pixel(' ')] * 1 + given_matrix_fragment[2],
+        ],
+        description='with a fixed width'
+    ),
     param(
         AlignMatrixCenterLineFragment(given_matrix_fragment),
         [
@@ -66,6 +96,24 @@ tests_data = [
             [Pixel(' ')] * 1 + given_matrix_fragment[1] + [Pixel(' ')] * 1,
             [Pixel(' ')] * 1 + given_matrix_fragment[2] + [Pixel(' ')] * 2,
         ]
+    ),
+    param(
+        AlignMatrixCenterLineFragment(given_matrix_fragment, 11),
+        [
+            [Pixel(' ')] * 3 + given_matrix_fragment[0] + [Pixel(' ')] * 3,
+            [Pixel(' ')] * 4 + given_matrix_fragment[1] + [Pixel(' ')] * 4,
+            [Pixel(' ')] * 4 + given_matrix_fragment[2] + [Pixel(' ')] * 5,
+        ],
+        description='with a fixed width'
+    ),
+    param(
+        AlignMatrixCenterLineFragment(given_matrix_fragment, 3),
+        [
+            given_matrix_fragment[0][:3],
+            given_matrix_fragment[1][:3],
+            given_matrix_fragment[2] + [Pixel(' ')]
+        ],
+        description='with a fixed width less than given fragment'
     ),
     param(
         ColorizeLineFragment(

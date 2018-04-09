@@ -21,7 +21,7 @@ class CursesRender:
 
     def create_empty_screen(self):
         """
-        Create a empty screen with the screen (terminal) size.
+        Create a empty screen with the screen (terminal) Size.
         """
         height, width = self.window.getmaxyx()
         return Screen(width - 1, height)

@@ -21,11 +21,11 @@ class BaseFragment:
     example where the given fragment isn't a fragment object in the
     converter module.
 
-    You can define the fragment size by passing the size argument in the
+    You can define the fragment Size by passing the Size argument in the
     constructor if it is not given, the BaseFragment will use the fragment
     length.
 
-    Remember that, if the given size is larger than the fragment size, you
+    Remember that, if the given Size is larger than the fragment Size, you
     should implement the _get_index by yourself because it by default always
     get the element by index from the fragment.
     """

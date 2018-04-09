@@ -81,7 +81,6 @@ class AlignCenterLineFragment(BaseFragment):
         elif index > self.__end_pixel:
             return Pixel(' ')
         else:
-            print(index)
             return self.get_fragment()[index - self.__start_pixel]
 
 
@@ -97,3 +96,6 @@ class AlignMatrixCenterLineFragment(BaseFragment):
 
     def _apply(self, element_part):
         return AlignCenterLineFragment(element_part, self.__width)
+
+    def get_width(self):
+        return self.__width

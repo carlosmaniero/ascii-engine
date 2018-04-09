@@ -3,7 +3,7 @@ import pytest
 from ascii_engine.colors import RGB
 from ascii_engine.elements.layouts import VerticalLayout
 from ascii_engine.elements.styles import size, colorize, align_center, \
-    align_right
+    align_right, display
 from ascii_engine.elements.text import Text
 from ascii_engine.fragments.align import AlignMatrixCenterLineFragment, \
     AlignMatrixRightLineFragment
@@ -86,3 +86,54 @@ def test_element_style_is_applied_in_the_given_order(element):
         element.to_pixels().get_fragment().get_fragment(),
         FixedMatrixFragment
     )
+
+
+@pytest.mark.parametrize('element', tests_data)
+def test_element_is_centered_given_the_display_style(element):
+    element.set_style([
+        display(horizontal_align='center', horizontal_size=100),
+    ])
+
+    assert isinstance(
+        element.to_pixels().get_fragment(),
+        AlignMatrixCenterLineFragment
+    )
+    assert element.to_pixels().get_width() == 100
+
+
+@pytest.mark.parametrize('element', tests_data)
+def test_element_is_centered_and_blocked_using_display(element):
+    element.set_style([
+        display(
+            horizontal_align='center',
+            horizontal_size=100,
+            vertical_size=200
+        ),
+    ])
+
+    assert isinstance(
+        element.to_pixels(),
+        FixedMatrixFragment
+    )
+    assert len(element.to_pixels()) == 200
+
+    assert isinstance(
+        element.to_pixels().get_fragment(),
+        AlignMatrixCenterLineFragment
+    )
+    assert element.to_pixels().get_fragment().get_width() == 100
+
+
+@pytest.mark.parametrize('element', tests_data)
+def test_element_has_fixed_width_using_display(element):
+    element.set_style([
+        display(
+            horizontal_size=100
+        ),
+    ])
+
+    assert isinstance(
+        element.to_pixels(),
+        FixedMatrixFragment
+    )
+    assert element.to_pixels().get_width() == 100

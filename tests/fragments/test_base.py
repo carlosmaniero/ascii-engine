@@ -5,7 +5,8 @@ import pytest
 from ascii_engine.colors import RGB
 from ascii_engine.fragments.align import AlignCenterLineFragment, \
     AlignRightLineFragment, AlignMatrixRightLineFragment, \
-    AlignMatrixCenterLineFragment
+    AlignMatrixCenterLineFragment, AlignMatrixBottomFragment, \
+    AlignMatrixMiddleFragment
 from ascii_engine.fragments.colorize import ColorizeMatrixFragment, \
     ColorizeLineFragment
 from ascii_engine.fragments.converter import StringToPixelLineFragment, \
@@ -114,6 +115,54 @@ tests_data = [
             given_matrix_fragment[2] + [Pixel(' ')]
         ],
         description='with a fixed width less than given fragment'
+    ),
+    param(
+        AlignMatrixBottomFragment(given_matrix_fragment, 5),
+        [
+            [Pixel(' ')] * 5,
+            [Pixel(' ')] * 5,
+            given_matrix_fragment[0] + [Pixel(' ')] * 0,
+            given_matrix_fragment[1] + [Pixel(' ')] * 2,
+            given_matrix_fragment[2] + [Pixel(' ')] * 3,
+        ]
+    ),
+    param(
+        AlignMatrixBottomFragment(given_matrix_fragment, 2),
+        [
+            given_matrix_fragment[0] + [Pixel(' ')] * 0,
+            given_matrix_fragment[1] + [Pixel(' ')] * 2,
+        ],
+        description='with a size less than the original'
+    ),
+    param(
+        AlignMatrixMiddleFragment(given_matrix_fragment, 5),
+        [
+            [Pixel(' ')] * 5,
+            given_matrix_fragment[0] + [Pixel(' ')] * 0,
+            given_matrix_fragment[1] + [Pixel(' ')] * 2,
+            given_matrix_fragment[2] + [Pixel(' ')] * 3,
+            [Pixel(' ')] * 5,
+        ]
+    ),
+    param(
+        AlignMatrixMiddleFragment(given_matrix_fragment, 6),
+        [
+            [Pixel(' ')] * 5,
+            given_matrix_fragment[0] + [Pixel(' ')] * 0,
+            given_matrix_fragment[1] + [Pixel(' ')] * 2,
+            given_matrix_fragment[2] + [Pixel(' ')] * 3,
+            [Pixel(' ')] * 5,
+            [Pixel(' ')] * 5,
+        ],
+        description='the largest number of blank lines in on bottom'
+    ),
+    param(
+        AlignMatrixMiddleFragment(given_matrix_fragment, 2),
+        [
+            given_matrix_fragment[0] + [Pixel(' ')] * 0,
+            given_matrix_fragment[1] + [Pixel(' ')] * 2,
+        ],
+        description='is cropped when the size is small than the fragment'
     ),
     param(
         ColorizeLineFragment(

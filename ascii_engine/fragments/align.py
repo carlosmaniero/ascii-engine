@@ -3,6 +3,7 @@ This module provides an easy way to align fragments on screen.
 """
 
 from ascii_engine.fragments.base import BaseFragment
+from ascii_engine.fragments.fixed import FixedMatrixFragment
 from ascii_engine.fragments.utils import get_max_line_width
 from ascii_engine.pixel import Pixel
 
@@ -99,3 +100,36 @@ class AlignMatrixCenterLineFragment(BaseFragment):
 
     def get_width(self):
         return self.__width
+
+
+class AlignMatrixBottomFragment(FixedMatrixFragment):
+    def __init__(self, lines_fragment, height):
+        super().__init__(lines_fragment, height=height)
+        self.__start_fragment = max(
+            self.get_height() - len(self.get_fragment()),
+            0
+        )
+
+    def _get_index(self, index):
+        if index < self.__start_fragment:
+            return self._apply([])
+        return self._apply(self.get_fragment()[index - self.__start_fragment])
+
+
+class AlignMatrixMiddleFragment(FixedMatrixFragment):
+    def __init__(self, lines_fragment, height):
+        super().__init__(lines_fragment, height=height)
+
+        self.__start_pixel = (height - len(lines_fragment)) // 2
+        self.__end_pixel = self.__start_pixel + len(lines_fragment) - 1
+
+        if height <= len(lines_fragment):
+            self.__start_pixel = 0
+            self.__end_pixel = len(lines_fragment)
+
+    def _get_index(self, index):
+        if self.__start_pixel <= index <= self.__end_pixel:
+            return self._apply(self.get_fragment()[
+               index - self.__start_pixel
+            ])
+        return self._apply([])

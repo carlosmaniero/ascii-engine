@@ -8,7 +8,12 @@ def draw(screen, state):
     text_element = Text('Hello, {}!'.format(state))
     text_element.set_style([
         colorize(RGB(255, 0, 0)),
-        display(horizontal_size=screen.get_width(), horizontal_align='center')
+        display(
+            horizontal_align='right',
+            horizontal_size=screen.get_width(),
+            vertical_align='bottom',
+            vertical_size=screen.get_height()
+        )
     ])
     screen.add_element(text_element)
     return screen

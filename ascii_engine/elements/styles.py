@@ -1,7 +1,8 @@
 from functools import reduce
 
 from ascii_engine.fragments.align import AlignMatrixRightLineFragment, \
-    AlignMatrixCenterLineFragment
+    AlignMatrixCenterLineFragment, AlignMatrixMiddleFragment, \
+    AlignMatrixBottomFragment
 from ascii_engine.fragments.colorize import ColorizeMatrixFragment
 from ascii_engine.fragments.fixed import FixedMatrixFragment
 
@@ -26,7 +27,8 @@ def align_center():
     return lambda fragment: AlignMatrixCenterLineFragment(fragment)
 
 
-def display(horizontal_align='left', horizontal_size=None, vertical_size=None):
+def display(horizontal_align='left', horizontal_size=None,
+            vertical_align='top', vertical_size=None):
     applyers = []
 
     if horizontal_align == 'center':
@@ -36,7 +38,36 @@ def display(horizontal_align='left', horizontal_size=None, vertical_size=None):
                 horizontal_size
             )
         )
-    if vertical_size or horizontal_size:
+    elif horizontal_align == 'right':
+        applyers.append(
+            lambda fragment: AlignMatrixRightLineFragment(
+                fragment,
+                horizontal_size
+            )
+        )
+
+    if vertical_align == 'middle' and vertical_size is not None:
+        applyers.append(
+            lambda fragment: AlignMatrixMiddleFragment(
+                fragment,
+                vertical_size
+            )
+        )
+    elif vertical_align == 'bottom' and vertical_size is not None:
+        applyers.append(
+            lambda fragment: AlignMatrixBottomFragment(
+                fragment,
+                vertical_size
+            )
+        )
+
+    default_horizontal_align = horizontal_align not in ('center', 'right')
+    fixed_width = horizontal_size is not None and default_horizontal_align
+
+    default_vertical_align = vertical_align not in ('middle', 'bottom')
+    fixed_height = vertical_size is not None and default_vertical_align
+
+    if fixed_width or fixed_height:
         applyers.append(size(horizontal_size, vertical_size))
 
     return lambda fragment: reduce(

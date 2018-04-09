@@ -46,6 +46,9 @@ class AlignMatrixRightLineFragment(BaseFragment):
     def _apply(self, element_part):
         return AlignRightLineFragment(element_part, self.__width)
 
+    def get_width(self):
+        return self.__width
+
 
 class AlignCenterLineFragment(BaseFragment):
     """

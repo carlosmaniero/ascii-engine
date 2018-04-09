@@ -27,16 +27,16 @@ tests_data = [
     param(align_center, AlignMatrixCenterLineFragment, ()),
 ]
 
+given_fragment = [
+    [Pixel('a'), Pixel('b'), Pixel('c')]
+]
+
 
 @pytest.mark.parametrize('style, fragment, args', tests_data)
 def test_that_the_style_configures_a_fragment(
         style, fragment, args):
 
-    with patch.object(fragment, '__init__', return_value=None) as \
-            mocked:
-        given_fragment = [
-            [Pixel('a'), Pixel('b'), Pixel('c')]
-        ]
+    with patch.object(fragment, '__init__', return_value=None) as mocked:
 
         style(*args)(given_fragment)
 
@@ -49,9 +49,5 @@ def test_that_the_style_returns_a_fragment_instance(
         style, fragment, args):
 
     with patch.object(fragment, '__init__', return_value=None):
-        given_fragment = [
-            [Pixel('a'), Pixel('b'), Pixel('c')]
-        ]
-
         result = style(*args)(given_fragment)
         assert isinstance(result, fragment)

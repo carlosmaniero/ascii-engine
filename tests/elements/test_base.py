@@ -1,6 +1,7 @@
 import pytest
 
 from ascii_engine.colors import RGB
+from ascii_engine.elements.forms import InputField
 from ascii_engine.elements.layouts import VerticalLayout
 from ascii_engine.elements.styles import size, colorize, align_center, \
     align_right, display
@@ -18,7 +19,8 @@ def param(element):
 
 tests_data = [
     param(Text('Hello, World')),
-    param(VerticalLayout(Text('Hello'), Text('World')))
+    param(VerticalLayout(Text('Hello'), Text('World'))),
+    param(InputField(InputField.State('Hello, World', False, 0))),
 ]
 
 
